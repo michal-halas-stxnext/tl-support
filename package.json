@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
+    "build:firefox": "tsc --noEmit && TARGET=firefox vite build",
+    "build:safari": "npm run build && xcrun safari-web-extension-converter dist --project-location dist-safari --app-name \"TL Support\" --macos-only --no-open --no-prompt --force",
     "test": "vitest run"
   },
   "dependencies": {
@@ -15,6 +17,7 @@
     "@crxjs/vite-plugin": "^3.0.0",
     "@preact/preset-vite": "^2.10.6",
     "@types/chrome": "^0.3.7",
+    "@types/node": "^26.6.6",
     "fake-indexeddb": "^6.2.8",
     "jsdom": "^31.0.1",
     "typescript": "^7.0.2",
