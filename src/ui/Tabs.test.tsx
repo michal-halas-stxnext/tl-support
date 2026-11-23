@@ -20,10 +20,10 @@ describe('Tabs', () => {
     expect(root.querySelector('.c-a')).not.toBeNull();
   });
 
-  it('domyślny rejestr: jeden tab „Time logged”', () => {
+  it('domyślny rejestr: Time logged + Akceptowanie', () => {
     const root = document.createElement('div');
     render(<Tabs />, root);
-    expect(Array.from(root.querySelectorAll('[role=tab]')).map((x) => x.textContent)).toEqual(['Time logged']);
+    expect(Array.from(root.querySelectorAll('[role=tab]')).map((x) => x.textContent)).toEqual(['Time logged', 'Akceptowanie']);
   });
 
   it('klik i klawiatura (←/→, Home/End), zapamiętanie, stała liczba węzłów paska', async () => {

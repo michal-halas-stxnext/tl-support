@@ -51,3 +51,31 @@ export async function fetchText(
   }
   return res.text();
 }
+
+/** POST JSON do intranetu (tylko przez `intranetUrl`); 401/403 i przekierowanie na login → `LoggedOutError`. */
+export async function postJson(fetchFn: FetchLike, pathAndQuery: string, body: unknown, signal?: AbortSignal): Promise<unknown> {
+  const url = intranetUrl(pathAndQuery);
+  if (signal?.aborted) throw new CancelledError();
+  let res: Response;
+  try {
+    res = await fetchFn(url, {
+      method: 'POST',
+      credentials: 'include',
+      signal,
+      redirect: 'follow',
+      headers: { 'content-type': 'application/json; charset=UTF-8', 'x-requested-with': 'XMLHttpRequest' },
+      body: JSON.stringify(body),
+    });
+  } catch (e) {
+    if (signal?.aborted) throw new CancelledError();
+    throw e;
+  }
+  if (res.status === 401 || res.status === 403) throw new LoggedOutError();
+  if (res.redirected) {
+    const to = new URL(res.url, INTRANET_ORIGIN);
+    if (to.origin !== INTRANET_ORIGIN || LOGIN_PATH.test(to.pathname)) throw new LoggedOutError();
+  }
+  if (res.status !== 200) throw new Error(`HTTP ${res.status} dla ${new URL(url).pathname}`);
+  if (/text\/html/i.test(res.headers.get('content-type') ?? '')) throw new LoggedOutError();
+  return res.json();
+}
