@@ -2,6 +2,8 @@ import type { ComponentType } from 'preact';
 import { useState } from 'preact/hooks';
 import { ApprovalView } from './ApprovalView';
 import { MonthView } from './MonthView';
+import { PanelProvider, type ShellProps } from './PanelContext';
+import { Toolbar } from './Toolbar';
 
 export type TabDef = { id: string; label: string; component: ComponentType };
 
@@ -28,7 +30,7 @@ function saveTab(id: string) {
   }
 }
 
-export function Tabs({ tabs = TABS }: { tabs?: TabDef[] }) {
+export function Tabs({ tabs = TABS, shell }: { tabs?: TabDef[]; shell?: ShellProps }) {
   const [saved, setSaved] = useState(loadTab);
   const active = tabs.find((t) => t.id === saved) ?? tabs[0];
   if (!active) return null;
@@ -53,6 +55,7 @@ export function Tabs({ tabs = TABS }: { tabs?: TabDef[] }) {
   const Active = active.component;
 
   return (
+    <PanelProvider {...shell}>
     <div class="tabs">
       <div class="tablist" role="tablist" aria-label="Widoki" onKeyDown={onKey}>
         {tabs.map((t) => (
@@ -70,9 +73,11 @@ export function Tabs({ tabs = TABS }: { tabs?: TabDef[] }) {
           </button>
         ))}
       </div>
+      <Toolbar />
       <div class="tabpanel" role="tabpanel" id={`tabpanel-${active.id}`} aria-labelledby={`tab-${active.id}`}>
         <Active />
       </div>
-    </div>
+      </div>
+    </PanelProvider>
   );
 }

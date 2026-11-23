@@ -1,4 +1,5 @@
 import { useRef } from 'preact/hooks';
+import type { ShellProps } from './PanelContext';
 import { Tabs, type TabDef } from './Tabs';
 import { clampSize, type Size, type Viewport } from './useResize';
 
@@ -13,6 +14,8 @@ type Props = {
   onReset?: () => void;
   /** Defaults to the TABS registry. */
   tabs?: TabDef[];
+  /** Shell (month, session) overrides for tests/demo. */
+  shell?: ShellProps;
 };
 
 type Edge = 'l' | 't' | 'tl';
@@ -29,7 +32,7 @@ const ICONS = {
   reset: 'M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5',
 };
 
-export function Panel({ onClose, fullscreen = false, onToggleFullscreen, size, viewport, onResize, onReset, tabs }: Props) {
+export function Panel({ onClose, fullscreen = false, onToggleFullscreen, size, viewport, onResize, onReset, tabs, shell }: Props) {
   const ref = useRef<HTMLElement>(null);
   const drag = useRef<{ x: number; y: number; w: number; h: number; edge: Edge } | null>(null);
   const vp = () => viewport ?? { w: window.innerWidth, h: window.innerHeight };
@@ -92,7 +95,7 @@ export function Panel({ onClose, fullscreen = false, onToggleFullscreen, size, v
         </span>
       </header>
       <div class="body">
-        <Tabs tabs={tabs} />
+        <Tabs tabs={tabs} shell={shell} />
       </div>
     </section>
   );

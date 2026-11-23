@@ -54,3 +54,24 @@ describe('Tabs', () => {
     root.remove();
   });
 });
+
+describe('Tabs shell', () => {
+  beforeEach(() => localStorage.clear());
+
+  it('one toolbar above the tab panel; month shared between tabs', async () => {
+    const root = document.createElement('div');
+    document.body.append(root);
+    const month = (id: string): TabDef => ({ id, label: id, component: () => <p class={`m-${id}`}>{id}</p> });
+    render(<Tabs tabs={[month('a'), month('b')]} shell={{ initialMonth: '2026-10', lineManagerId: '1' }} />, root);
+    expect(root.querySelectorAll('.toolbar')).toHaveLength(1);
+    const kids = Array.from(root.querySelector('.tabs')!.children).map((c) => c.className.split(' ')[0]);
+    expect(kids).toEqual(['tablist', 'toolbar', 'tabpanel']);
+    (root.querySelector('.prev') as HTMLButtonElement).click();
+    await tick();
+    (root.querySelectorAll('[role=tab]')[1] as HTMLButtonElement).click();
+    await tick();
+    expect(root.querySelector('.month-label')?.textContent).toBe('2026-09');
+    expect(root.querySelectorAll('.toolbar')).toHaveLength(1);
+    root.remove();
+  });
+});

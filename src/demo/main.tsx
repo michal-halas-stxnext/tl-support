@@ -7,6 +7,7 @@ import { parseTimesheet } from '../parsers/timesheet';
 import { parseApprovalEntries } from '../parsers/approval';
 import { ApprovalView, type ApprovalDeps } from '../ui/ApprovalView';
 import { MonthView } from '../ui/MonthView';
+import { Tabs } from '../ui/Tabs';
 import { styles } from '../ui/styles';
 
 const f = import.meta.glob('../../fixtures/*.{html,json}', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
@@ -37,11 +38,13 @@ const approvalDeps: ApprovalDeps = {
 };
 
 document.head.append(Object.assign(document.createElement('style'), { textContent: styles + '.demo-wrap{font:14px system-ui;padding:16px}' }));
+const tabs = [
+  { id: 'time-logged', label: 'Time logged', component: () => <MonthView demo loadSnapshot={async (m) => (m === '2026-11' ? snap : undefined)} /> },
+  { id: 'approval', label: 'Approval', component: () => <ApprovalView deps={approvalDeps} /> },
+];
 render(
   <div class="demo-wrap">
-    <MonthView demo initialMonth="2026-11" loadSnapshot={async (m) => (m === '2026-11' ? snap : undefined)} />
-    <hr />
-    <ApprovalView deps={approvalDeps} initialMonth="2026-11" lineManagerId="1954" />
+    <Tabs tabs={tabs} shell={{ initialMonth: '2026-11', lineManagerId: '1954' }} />
   </div>,
   document.getElementById('app')!,
 );

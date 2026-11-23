@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { acceptEntries, fetchApproval, rejectEntries, type ApprovalResult } from '../approval/api';
 import { groupByPerson, type BillabilityFilter } from '../approval/model';
-import { detectLineManagerId } from '../collector/collect';
 import { LoggedOutError, type FetchLike } from '../collector/http';
 import type { ApprovalEntry } from '../domain/types';
-import { MonthNav, thisMonth } from './MonthNav';
+import { useDialog } from './Dialog';
+import { usePanel } from './PanelContext';
 
 const hm = (min: number) => `${Math.floor(min / 60)}:${String(min % 60).padStart(2, '0')}`;
 const msg = (e: unknown) => (e instanceof Error ? e.message : String(e));
@@ -26,15 +26,15 @@ const realDeps: ApprovalDeps = {
 type Props = {
   /** Injected in demo/tests; defaults to the real intranet API. */
   deps?: ApprovalDeps;
-  initialMonth?: string;
-  lineManagerId?: string;
-  confirmFn?: (text: string) => boolean;
+  /** Override of the confirmation (tests); defaults to the in-panel dialog. */
+  confirmFn?: (text: string) => boolean | Promise<boolean>;
   /** Defaults to non-billable (those usually need manual approval). */
   initialBillability?: BillabilityFilter;
 };
 
-export function ApprovalView({ deps = realDeps, initialMonth, lineManagerId, confirmFn = (t) => confirm(t), initialBillability = 'non' }: Props) {
-  const [month, setMonth] = useState(initialMonth ?? thisMonth());
+export function ApprovalView({ deps = realDeps, confirmFn, initialBillability = 'non' }: Props) {
+  const { month, lineManagerId, settings, setLoggedOut } = usePanel();
+  const { confirm } = useDialog();
   const [entries, setEntries] = useState<ApprovalEntry[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -47,39 +47,47 @@ export function ApprovalView({ deps = realDeps, initialMonth, lineManagerId, con
 
   useEffect(() => {
     let alive = true;
-    const lm = lineManagerId ?? detectLineManagerId();
-    if (!lm) {
+    if (!lineManagerId) {
       setLoaded(true);
-      setStatus({ text: 'Could not detect the logged-in user — open a regular intranet page.', error: true });
       return;
     }
     setLoaded(false);
     deps
-      .fetchEntries(month, lm)
+      .fetchEntries(month, lineManagerId)
       .then((e) => {
         if (!alive) return;
+        setLoggedOut(false);
         setEntries(e);
         setSelected(new Set());
       })
       .catch((e) => {
         if (!alive) return;
         setEntries([]);
-        setStatus({ text: e instanceof LoggedOutError ? 'Log in to the intranet' : `Error: ${msg(e)}`, error: true });
+        if (e instanceof LoggedOutError) setLoggedOut(true);
+        else setStatus({ text: `Error: ${msg(e)}`, error: true });
       })
       .finally(() => alive && setLoaded(true));
     return () => {
       alive = false;
     };
-  }, [month, reload]);
+  }, [month, reload, lineManagerId]);
 
   const states = useMemo(() => [...new Set(['OPEN', 'ACCEPTED', 'REJECTED', ...entries.map((e) => e.state)])], [entries]);
-  const groups = useMemo(() => groupByPerson(entries, { billability, state }), [entries, billability, state]);
-  const byId = useMemo(() => new Map(entries.map((e) => [e.id, e])), [entries]);
+  const visible = useMemo(() => {
+    const ex = new Set(settings.excluded);
+    return entries.filter((e) => !ex.has(e.personId));
+  }, [entries, settings.excluded]);
+  const groups = useMemo(() => groupByPerson(visible, { billability, state }), [visible, billability, state]);
+  const byId = useMemo(() => new Map(visible.map((e) => [e.id, e])), [visible]);
 
   async function run(kind: 'accept' | 'reject', ids: string[]) {
     if (ids.length === 0 || busy) return;
     const verb = kind === 'accept' ? 'Accept' : 'Reject';
-    if (ids.length > 1 && !confirmFn(`${verb} ${ids.length} entries? Entries cannot be returned to “Pending”.`)) return;
+    if (ids.length > 1) {
+      const text = `${verb} ${ids.length} entries? Entries cannot be returned to “Pending”.`;
+      const ok = confirmFn ? await confirmFn(text) : await confirm({ title: `${verb} entries`, message: text, confirmLabel: verb, danger: kind === 'reject' });
+      if (!ok) return;
+    }
     setBusy(true);
     setStatus({ text: '' });
     try {
@@ -89,7 +97,8 @@ export function ApprovalView({ deps = realDeps, initialMonth, lineManagerId, con
       else setStatus({ text: `${done}: ${r.ok.length}, failed: ${r.failed.length} (${r.failed[0]!.error})`, error: true });
       setReload((n) => n + 1);
     } catch (e) {
-      setStatus({ text: e instanceof LoggedOutError ? 'Log in to the intranet' : `Error: ${msg(e)}`, error: true });
+      if (e instanceof LoggedOutError) setLoggedOut(true);
+      else setStatus({ text: `Error: ${msg(e)}`, error: true });
     } finally {
       setBusy(false);
     }
@@ -106,8 +115,16 @@ export function ApprovalView({ deps = realDeps, initialMonth, lineManagerId, con
 
   return (
     <div class="approval-view">
-      <div class="month-nav">
-        <MonthNav month={month} onChange={setMonth} />
+      <div class="approval-bar">
+        <span class="sel-actions">
+          <button type="button" class="btn sm primary acc-sel" disabled={busy || idsOf(selectedEntries, 'accept').length === 0} onClick={() => run('accept', idsOf(selectedEntries, 'accept'))}>
+            Accept selected ({selected.size})
+          </button>
+          <button type="button" class="btn sm danger rej-sel" disabled={busy || idsOf(selectedEntries, 'reject').length === 0} onClick={() => run('reject', idsOf(selectedEntries, 'reject'))}>
+            Reject selected
+          </button>
+        </span>
+        <span class={status.error ? 'approval-status err' : 'approval-status'} role="status" title={status.text}>{status.text}</span>
         <select class="sel billability" aria-label="Hours type" value={billability} onChange={(e) => setBillability((e.target as HTMLSelectElement).value as BillabilityFilter)}>
           <option value="all">All</option>
           <option value="billable">Billable</option>
@@ -119,17 +136,6 @@ export function ApprovalView({ deps = realDeps, initialMonth, lineManagerId, con
             <option value={s}>{STATE_LABEL[s] ?? s}</option>
           ))}
         </select>
-      </div>
-      <div class="approval-bar">
-        <span class="sel-actions">
-          <button type="button" class="btn sm primary acc-sel" disabled={busy || idsOf(selectedEntries, 'accept').length === 0} onClick={() => run('accept', idsOf(selectedEntries, 'accept'))}>
-            Accept selected ({selected.size})
-          </button>
-          <button type="button" class="btn sm danger rej-sel" disabled={busy || idsOf(selectedEntries, 'reject').length === 0} onClick={() => run('reject', idsOf(selectedEntries, 'reject'))}>
-            Reject selected
-          </button>
-        </span>
-        <span class={status.error ? 'approval-status err' : 'approval-status'} role="status" title={status.text}>{status.text}</span>
       </div>
       <div class="content approval-list">
         {!loaded && <div class="loading" role="status" aria-label="Loading" />}
