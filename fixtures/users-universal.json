@@ -1,0 +1,773 @@
+[
+  {
+    "id": "user-001",
+    "avatar": "/api/images/users/user-001?v=0",
+    "name": "Osoba A",
+    "contact": {
+      "email": "user-001@example.com",
+      "phone": "+00 000000000"
+    },
+    "department": {
+      "id": "34",
+      "name": "JavaScript"
+    },
+    "roles": [
+      {
+        "id": "5",
+        "name": "JavaScript Developer",
+        "shortcut": "JS"
+      }
+    ],
+    "teams": [
+      {
+        "id": "1174",
+        "name": "Tails.com"
+      },
+      {
+        "id": "1180",
+        "name": "JS Team 04"
+      }
+    ],
+    "lineManagerId": "user-002",
+    "company": {
+      "id": 1,
+      "name": "STX Next PL"
+    },
+    "isAllocable": true,
+    "isEmployee": true,
+    "isPartner": false,
+    "isClient": false,
+    "teamRoles": [
+      {
+        "id": "5",
+        "name": "JavaScript Developer"
+      }
+    ],
+    "isFreelancer": false,
+    "isUop": false,
+    "soonWithUs": false,
+    "isActive": true
+  },
+  {
+    "id": "user-003",
+    "avatar": "/api/images/users/user-003?v=0",
+    "name": "Osoba B",
+    "contact": {
+      "email": "user-003@example.com",
+      "phone": "+00 000000000"
+    },
+    "department": {
+      "id": "34",
+      "name": "JavaScript"
+    },
+    "roles": [
+      {
+        "id": "5",
+        "name": "JavaScript Developer",
+        "shortcut": "JS"
+      }
+    ],
+    "teams": [
+      {
+        "id": "1180",
+        "name": "JS Team 04"
+      },
+      {
+        "id": "1003",
+        "name": "3.Chorepgraph-Campaign Governance"
+      }
+    ],
+    "lineManagerId": "user-002",
+    "company": {
+      "id": 1,
+      "name": "STX Next PL"
+    },
+    "isAllocable": true,
+    "isEmployee": true,
+    "isPartner": false,
+    "isClient": false,
+    "teamRoles": [
+      {
+        "id": "5",
+        "name": "JavaScript Developer"
+      }
+    ],
+    "isFreelancer": false,
+    "isUop": false,
+    "soonWithUs": false,
+    "isActive": true
+  },
+  {
+    "id": "user-004",
+    "avatar": "/api/images/users/user-004?v=0",
+    "name": "Osoba C",
+    "contact": {
+      "email": "user-004@example.com",
+      "phone": "+00 000000000"
+    },
+    "department": {
+      "id": "34",
+      "name": "JavaScript"
+    },
+    "roles": [
+      {
+        "id": "5",
+        "name": "JavaScript Developer",
+        "shortcut": "JS"
+      }
+    ],
+    "teams": [
+      {
+        "id": "1180",
+        "name": "JS Team 04"
+      },
+      {
+        "id": "1164",
+        "name": "3.Choreograph - Campaign Management"
+      }
+    ],
+    "lineManagerId": "user-002",
+    "company": {
+      "id": 1,
+      "name": "STX Next PL"
+    },
+    "isAllocable": true,
+    "isEmployee": true,
+    "isPartner": false,
+    "isClient": false,
+    "teamRoles": [
+      {
+        "id": "5",
+        "name": "JavaScript Developer"
+      },
+      {
+        "id": "57",
+        "name": "Technical Lead"
+      }
+    ],
+    "isFreelancer": false,
+    "isUop": false,
+    "soonWithUs": false,
+    "isActive": true
+  },
+  {
+    "id": "user-005",
+    "avatar": "/api/images/users/user-005?v=0",
+    "name": "Osoba D",
+    "contact": {
+      "email": "user-005@example.com",
+      "phone": "+00 000000000"
+    },
+    "department": {
+      "id": "34",
+      "name": "JavaScript"
+    },
+    "roles": [
+      {
+        "id": "5",
+        "name": "JavaScript Developer",
+        "shortcut": "JS"
+      }
+    ],
+    "teams": [
+      {
+        "id": "1180",
+        "name": "JS Team 04"
+      },
+      {
+        "id": "1164",
+        "name": "3.Choreograph - Campaign Management"
+      }
+    ],
+    "lineManagerId": "user-002",
+    "company": {
+      "id": 1,
+      "name": "STX Next PL"
+    },
+    "isAllocable": true,
+    "isEmployee": true,
+    "isPartner": false,
+    "isClient": false,
+    "teamRoles": [
+      {
+        "id": "5",
+        "name": "JavaScript Developer"
+      }
+    ],
+    "isFreelancer": false,
+    "isUop": false,
+    "soonWithUs": false,
+    "isActive": true
+  },
+  {
+    "id": "user-006",
+    "avatar": "/api/images/users/user-006?v=0",
+    "name": "Osoba E",
+    "contact": {
+      "email": "user-006@example.com",
+      "phone": "+00 000000000"
+    },
+    "department": {
+      "id": "34",
+      "name": "JavaScript"
+    },
+    "roles": [
+      {
+        "id": "5",
+        "name": "JavaScript Developer",
+        "shortcut": "JS"
+      }
+    ],
+    "teams": [
+      {
+        "id": "1003",
+        "name": "3.Chorepgraph-Campaign Governance"
+      },
+      {
+        "id": "1180",
+        "name": "JS Team 04"
+      }
+    ],
+    "lineManagerId": "user-002",
+    "company": {
+      "id": 1,
+      "name": "STX Next PL"
+    },
+    "isAllocable": true,
+    "isEmployee": true,
+    "isPartner": false,
+    "isClient": false,
+    "teamRoles": [
+      {
+        "id": "5",
+        "name": "JavaScript Developer"
+      }
+    ],
+    "isFreelancer": false,
+    "isUop": false,
+    "soonWithUs": false,
+    "isActive": true
+  },
+  {
+    "id": "user-002",
+    "avatar": "/api/images/users/user-002?v=0",
+    "name": "Osoba F",
+    "contact": {
+      "email": "user-002@example.com",
+      "phone": "+00 000000000"
+    },
+    "department": {
+      "id": "34",
+      "name": "JavaScript"
+    },
+    "roles": [
+      {
+        "id": "455",
+        "name": "JS Coordinator",
+        "shortcut": "JS Coordinator"
+      }
+    ],
+    "teams": [
+      {
+        "id": "1253",
+        "name": "Grosvenor Group"
+      },
+      {
+        "id": "1180",
+        "name": "JS Team 04"
+      },
+      {
+        "id": "1115",
+        "name": "Tech Recruitment Team"
+      },
+      {
+        "id": "1003",
+        "name": "3.Chorepgraph-Campaign Governance"
+      }
+    ],
+    "lineManagerId": "user-007",
+    "company": {
+      "id": 1,
+      "name": "STX Next PL"
+    },
+    "isAllocable": true,
+    "isEmployee": true,
+    "isPartner": false,
+    "isClient": false,
+    "teamRoles": [
+      {
+        "id": "455",
+        "name": "JS Coordinator"
+      },
+      {
+        "id": "186",
+        "name": "JS Team Lead"
+      },
+      {
+        "id": "5",
+        "name": "JavaScript Developer"
+      },
+      {
+        "id": "82",
+        "name": "Node.js Developer"
+      }
+    ],
+    "isFreelancer": false,
+    "isUop": false,
+    "soonWithUs": false,
+    "isActive": true
+  },
+  {
+    "id": "user-008",
+    "avatar": "/api/images/users/user-008?v=0",
+    "name": "Osoba G",
+    "contact": {
+      "email": "user-008@example.com",
+      "phone": "+00 000000000"
+    },
+    "department": {
+      "id": "34",
+      "name": "JavaScript"
+    },
+    "roles": [
+      {
+        "id": "5",
+        "name": "JavaScript Developer",
+        "shortcut": "JS"
+      }
+    ],
+    "teams": [
+      {
+        "id": "1180",
+        "name": "JS Team 04"
+      },
+      {
+        "id": "954",
+        "name": "Canon PP"
+      }
+    ],
+    "lineManagerId": "user-002",
+    "company": {
+      "id": 1,
+      "name": "STX Next PL"
+    },
+    "isAllocable": true,
+    "isEmployee": true,
+    "isPartner": false,
+    "isClient": false,
+    "teamRoles": [
+      {
+        "id": "5",
+        "name": "JavaScript Developer"
+      },
+      {
+        "id": "82",
+        "name": "Node.js Developer"
+      }
+    ],
+    "isFreelancer": false,
+    "isUop": false,
+    "soonWithUs": false,
+    "isActive": true
+  },
+  {
+    "id": "user-009",
+    "avatar": "/api/images/users/user-009?v=0",
+    "name": "Osoba H",
+    "contact": {
+      "email": "user-009@example.com",
+      "phone": "+00 000000000"
+    },
+    "department": {
+      "id": "34",
+      "name": "JavaScript"
+    },
+    "roles": [
+      {
+        "id": "5",
+        "name": "JavaScript Developer",
+        "shortcut": "JS"
+      }
+    ],
+    "teams": [
+      {
+        "id": "1377",
+        "name": "Axer Credit"
+      },
+      {
+        "id": "1322",
+        "name": "Harman International / Hurricane Debby"
+      },
+      {
+        "id": "1317",
+        "name": "BSI"
+      },
+      {
+        "id": "1180",
+        "name": "JS Team 04"
+      },
+      {
+        "id": "1132",
+        "name": "3.Pixit Media Ngenea Hub2"
+      }
+    ],
+    "lineManagerId": "user-002",
+    "company": {
+      "id": 1,
+      "name": "STX Next PL"
+    },
+    "isAllocable": true,
+    "isEmployee": true,
+    "isPartner": false,
+    "isClient": false,
+    "teamRoles": [
+      {
+        "id": "58",
+        "name": "Full-Stack Developer"
+      },
+      {
+        "id": "5",
+        "name": "JavaScript Developer"
+      }
+    ],
+    "isFreelancer": false,
+    "isUop": false,
+    "soonWithUs": false,
+    "isActive": true
+  },
+  {
+    "id": "user-010",
+    "avatar": "/api/images/users/user-010?v=0",
+    "name": "Osoba I",
+    "contact": {
+      "email": "user-010@example.com",
+      "phone": "+00 000000000"
+    },
+    "department": {
+      "id": "34",
+      "name": "JavaScript"
+    },
+    "roles": [
+      {
+        "id": "5",
+        "name": "JavaScript Developer",
+        "shortcut": "JS"
+      }
+    ],
+    "teams": [
+      {
+        "id": "1089",
+        "name": "3.Choreograph-emPerformancePlanner"
+      },
+      {
+        "id": "1180",
+        "name": "JS Team 04"
+      }
+    ],
+    "lineManagerId": "user-002",
+    "company": {
+      "id": 1,
+      "name": "STX Next PL"
+    },
+    "isAllocable": true,
+    "isEmployee": true,
+    "isPartner": false,
+    "isClient": false,
+    "teamRoles": [
+      {
+        "id": "5",
+        "name": "JavaScript Developer"
+      }
+    ],
+    "isFreelancer": false,
+    "isUop": false,
+    "soonWithUs": false,
+    "isActive": true
+  },
+  {
+    "id": "user-011",
+    "avatar": "/api/images/users/user-011?v=0",
+    "name": "Osoba J",
+    "contact": {
+      "email": "user-011@example.com",
+      "phone": "+00 000000000"
+    },
+    "department": {
+      "id": "34",
+      "name": "JavaScript"
+    },
+    "roles": [
+      {
+        "id": "5",
+        "name": "JavaScript Developer",
+        "shortcut": "JS"
+      }
+    ],
+    "teams": [
+      {
+        "id": "1180",
+        "name": "JS Team 04"
+      },
+      {
+        "id": "1003",
+        "name": "3.Chorepgraph-Campaign Governance"
+      }
+    ],
+    "lineManagerId": "user-002",
+    "company": {
+      "id": 1,
+      "name": "STX Next PL"
+    },
+    "isAllocable": true,
+    "isEmployee": true,
+    "isPartner": false,
+    "isClient": false,
+    "teamRoles": [
+      {
+        "id": "5",
+        "name": "JavaScript Developer"
+      }
+    ],
+    "isFreelancer": false,
+    "isUop": false,
+    "soonWithUs": false,
+    "isActive": true
+  },
+  {
+    "id": "user-012",
+    "avatar": "/api/images/users/user-012?v=0",
+    "name": "Osoba K",
+    "contact": {
+      "email": "user-012@example.com",
+      "phone": "+00 000000000"
+    },
+    "department": {
+      "id": "54",
+      "name": "Backend"
+    },
+    "roles": [
+      {
+        "id": "3",
+        "name": "Python Developer",
+        "shortcut": "PY"
+      }
+    ],
+    "teams": [
+      {
+        "id": "1161",
+        "name": "Mozilla Foundation - Web"
+      }
+    ],
+    "lineManagerId": "user-013",
+    "company": {
+      "id": 1,
+      "name": "STX Next PL"
+    },
+    "isAllocable": true,
+    "isEmployee": true,
+    "isPartner": false,
+    "isClient": false,
+    "teamRoles": [
+      {
+        "id": "3",
+        "name": "Python Developer"
+      }
+    ],
+    "isFreelancer": false,
+    "isUop": false,
+    "soonWithUs": false,
+    "isActive": true
+  },
+  {
+    "id": "user-014",
+    "avatar": "/api/images/users/user-014?v=0",
+    "name": "Osoba L",
+    "contact": {
+      "email": "user-014@example.com",
+      "phone": "+00 000000000"
+    },
+    "department": {
+      "id": "56",
+      "name": "Delivery Management"
+    },
+    "roles": [
+      {
+        "id": "239",
+        "name": "Project Manager",
+        "shortcut": "Project Manager"
+      }
+    ],
+    "teams": [
+      {
+        "id": "1312",
+        "name": "Crafton (CF Design System)"
+      },
+      {
+        "id": "1313",
+        "name": "Hostersi | MLOps"
+      },
+      {
+        "id": "1314",
+        "name": "Hostersi | FaaS"
+      },
+      {
+        "id": "1275",
+        "name": "Delivery"
+      }
+    ],
+    "lineManagerId": "user-015",
+    "company": {
+      "id": 6,
+      "name": "Brainhub"
+    },
+    "isAllocable": true,
+    "isEmployee": true,
+    "isPartner": false,
+    "isClient": false,
+    "teamRoles": [
+      {
+        "id": "239",
+        "name": "Project Manager"
+      }
+    ],
+    "isFreelancer": false,
+    "isUop": false,
+    "soonWithUs": false,
+    "isActive": true
+  },
+  {
+    "id": "user-016",
+    "avatar": "/api/images/users/user-016?v=0",
+    "name": "Osoba M",
+    "contact": {
+      "email": "user-016@example.com",
+      "phone": "+00 000000000"
+    },
+    "department": {
+      "id": "54",
+      "name": "Backend"
+    },
+    "roles": [
+      {
+        "id": "3",
+        "name": "Python Developer",
+        "shortcut": "PY"
+      }
+    ],
+    "teams": [
+      {
+        "id": "1398",
+        "name": "Valda Discovery"
+      },
+      {
+        "id": "1164",
+        "name": "3.Choreograph - Campaign Management"
+      },
+      {
+        "id": "1027",
+        "name": "Valorisoft"
+      },
+      {
+        "id": "74",
+        "name": "!NP Piła"
+      }
+    ],
+    "lineManagerId": "user-017",
+    "company": {
+      "id": 1,
+      "name": "STX Next PL"
+    },
+    "isAllocable": true,
+    "isEmployee": true,
+    "isPartner": false,
+    "isClient": false,
+    "teamRoles": [
+      {
+        "id": "3",
+        "name": "Python Developer"
+      }
+    ],
+    "isFreelancer": false,
+    "isUop": false,
+    "soonWithUs": false,
+    "isActive": true
+  },
+  {
+    "id": "user-018",
+    "avatar": "/api/images/users/user-018?v=0",
+    "name": "Osoba N",
+    "contact": {
+      "email": "user-018@example.com",
+      "phone": "+00 000000000"
+    },
+    "department": {
+      "id": null,
+      "name": null
+    },
+    "roles": [],
+    "teams": [],
+    "lineManagerId": null,
+    "company": {
+      "id": 1,
+      "name": "STX Next PL"
+    },
+    "isAllocable": false,
+    "isEmployee": false,
+    "isPartner": true,
+    "isClient": false,
+    "teamRoles": [],
+    "isFreelancer": true,
+    "isUop": false,
+    "soonWithUs": false,
+    "isActive": true
+  },
+  {
+    "id": "user-019",
+    "avatar": "/api/images/users/user-019?v=0",
+    "name": "Osoba O",
+    "contact": {
+      "email": "user-019@example.com",
+      "phone": "+00 000000000"
+    },
+    "department": {
+      "id": "32",
+      "name": "Quality Assurance"
+    },
+    "roles": [
+      {
+        "id": "191",
+        "name": "QA Engineer",
+        "shortcut": ""
+      }
+    ],
+    "teams": [
+      {
+        "id": "1174",
+        "name": "Tails.com"
+      },
+      {
+        "id": "1024",
+        "name": "QA Ulysses"
+      }
+    ],
+    "lineManagerId": "user-020",
+    "company": {
+      "id": 1,
+      "name": "STX Next PL"
+    },
+    "isAllocable": true,
+    "isEmployee": true,
+    "isPartner": false,
+    "isClient": false,
+    "teamRoles": [
+      {
+        "id": "191",
+        "name": "QA Engineer"
+      }
+    ],
+    "isFreelancer": false,
+    "isUop": false,
+    "soonWithUs": false,
+    "isActive": true
+  }
+]
