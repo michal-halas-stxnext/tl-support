@@ -6,10 +6,10 @@ Source: rozmowa 2026-11-23 — „nowa zakładka: Akceptowanie godzin, bilowalny
 ## Stages
 | NN | Stage | Executor | Status | Verification |
 |----|-------|----------|--------|--------------|
-| 01 | [Rozpoznanie endpointów accept/reject](01-write-api-recon.md) | mixed | planned | wpis w `fixtures/NOTES.md` + fixture requestu/odpowiedzi, potwierdzenie użytkownika |
-| 02 | [Parser wpisów + klient zapisu](02-approval-client.md) | agent | planned | `npx vitest run src/parsers src/approval` |
-| 03 | [Zakładka UI](03-approval-tab.md) | agent | planned | `npx vitest run src/ui`, `npm run build`, przegląd demo |
-| 04 | [Test na żywym intranecie](04-live-test.md) | user | planned | potwierdzenie użytkownika |
+| 01 | [Rozpoznanie endpointów accept/reject](01-write-api-recon.md) | mixed | done | wpis w `fixtures/NOTES.md` + fixture requestu/odpowiedzi, potwierdzenie użytkownika |
+| 02 | [Parser wpisów + klient zapisu](02-approval-client.md) | agent | done | `npx vitest run src/parsers src/approval` |
+| 03 | [Zakładka UI](03-approval-tab.md) | agent | done | `npx vitest run src/ui`, `npm run build`, przegląd demo |
+| 04 | [Test na żywym intranecie](04-live-test.md) | user | done | potwierdzenie użytkownika |
 
 ## Decisions
 - Q1: Akceptacja z wtyczki (zapis przez API intranetu), nie tylko przegląd
