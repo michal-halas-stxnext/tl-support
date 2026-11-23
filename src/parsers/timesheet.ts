@@ -4,8 +4,8 @@ import { ParseError } from './errors';
 import { COL, PAGE } from './timesheet.selectors';
 
 /**
- * Odpowiedź API approval (JSON) → godziny per osoba per dzień, tylko dla `year`/`month` (1–12).
- * Wiele wpisów z dnia sumowane; billable i non-billable osobno. Pusty miesiąc → [].
+ * Approval API response (JSON) → hours per person per day, only for `year`/`month` (1–12).
+ * Multiple entries on a day are summed; billable and non-billable separately. Empty month → [].
  */
 export function parseTimesheet(input: string | unknown, year: number, month: number): TimeEntry[] {
   let data: any = input;
@@ -32,7 +32,7 @@ export function parseTimesheet(input: string | unknown, year: number, month: num
     const date = parsePlDate(row[ix[COL.date]]);
     const minutes = parseHm(row[ix[COL.time]]);
     const rawId = row[ix[COL.userId]];
-    const personId = typeof rawId === 'number' ? String(rawId) : rawId; // id bywa liczbą lub stringiem
+    const personId = typeof rawId === 'number' ? String(rawId) : rawId; // id may be a number or a string
     if (!date || minutes === null || typeof personId !== 'string' || personId === '') {
       const bad = [!date && 'date', minutes === null && 'time', typeof personId !== 'string' && 'user_id']
         .filter(Boolean)

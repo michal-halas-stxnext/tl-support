@@ -28,7 +28,7 @@ const change = (el: HTMLSelectElement, v: string) => {
 };
 
 describe('ApprovalView', () => {
-  it('lista osób z sumami billable/non-billable zgodnymi z modelem', async () => {
+  it('people list with billable/non-billable sums matching the model', async () => {
     const { root } = setup();
     await tick();
     const groups = groupByPerson(all);
@@ -40,7 +40,7 @@ describe('ApprovalView', () => {
     expect(q(row, '.nb').textContent).toBe(`+${h(g.nonBillableMinutes)}`);
   });
 
-  it('domyślny filtr: non-billable; „Today” wraca do bieżącego miesiąca', async () => {
+  it('default filter: non-billable; "Today" returns to the current month', async () => {
     const root = document.createElement('div');
     render(<ApprovalView deps={{ fetchEntries: async () => all, accept: async () => ({ ok: [], failed: [] }), reject: async () => ({ ok: [], failed: [] }) }} initialMonth="2000-01" lineManagerId="1" />, root);
     await tick();
@@ -52,7 +52,7 @@ describe('ApprovalView', () => {
     expect((q(root, '.today') as HTMLButtonElement).disabled).toBe(true);
   });
 
-  it('filtry billability i stanu zmieniają listę', async () => {
+  it('billability and state filters change the list', async () => {
     const { root } = setup();
     await tick();
     change(q(root, '.billability'), 'non');
@@ -63,7 +63,7 @@ describe('ApprovalView', () => {
     expect(root.querySelector('.empty')).not.toBeNull();
   });
 
-  it('„Akceptuj wszystko” → potwierdzenie → accept z id osoby → odświeżenie', async () => {
+  it('"Accept all" → confirmation → accept with person id → refresh', async () => {
     const confirmFn = vi.fn(() => true);
     const { root, deps } = setup({}, confirmFn);
     await tick();
@@ -76,7 +76,7 @@ describe('ApprovalView', () => {
     expect(q(root, '.approval-status').textContent).toContain(`Accepted: ${g.entries.length}`);
   });
 
-  it('odmowa w potwierdzeniu → brak wywołania', async () => {
+  it('declining the confirmation → no call', async () => {
     const { root, deps } = setup({}, () => false);
     await tick();
     (q(root, '.acc-all') as HTMLButtonElement).click();
@@ -118,7 +118,7 @@ describe('ApprovalView', () => {
     expect((q(root, '.acc-one') as HTMLButtonElement).disabled).toBe(true);
   });
 
-  it('częściowa porażka, wylogowanie — komunikat w stałej linii statusu', async () => {
+  it('partial failure, logout — message in the fixed status line', async () => {
     const { root } = setup({ accept: async (ids) => ({ ok: ids.slice(1), failed: [{ id: ids[0]!, error: 'HTTP 500' }] }) });
     await tick();
     const bar = q(root, '.approval-bar');
@@ -134,7 +134,7 @@ describe('ApprovalView', () => {
     expect(q(out.root, '.approval-status').textContent).toBe('Log in to the intranet');
   });
 
-  it('zmiana miesiąca pobiera dane', async () => {
+  it('changing the month fetches data', async () => {
     const { root, deps } = setup();
     await tick();
     (q(root, '.prev') as HTMLButtonElement).click();

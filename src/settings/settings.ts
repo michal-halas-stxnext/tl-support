@@ -1,11 +1,11 @@
 import type { IsoDate, Person } from '../domain/types';
 
 export interface Settings {
-  /** Id osób wykluczonych z widoku. */
+  /** Ids of people excluded from the view. */
   excluded: string[];
-  /** Osoby dodane ręcznie (id z intranetu + nazwa). */
+  /** Manually added people (intranet id + name). */
   extraPeople: Pick<Person, 'id' | 'name'>[];
-  /** Własne dni wolne `YYYY-MM-DD`. */
+  /** Custom days off `YYYY-MM-DD`. */
   customDaysOff: IsoDate[];
   dailyNorm: number;
 }
@@ -13,7 +13,7 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = { excluded: [], extraPeople: [], customDaysOff: [], dailyNorm: 8 };
 const KEY = 'tl-support:settings';
 
-/** Lista do wyświetlenia: snapshot + dodane ręcznie − wykluczone. */
+/** List to display: snapshot + manually added − excluded. */
 export function effectivePeople(people: Person[], s: Settings): Person[] {
   const seen = new Set(people.map((p) => p.id));
   const extra = s.extraPeople

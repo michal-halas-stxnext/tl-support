@@ -6,9 +6,9 @@ export const shiftMonth = (m: string, d: number) => {
 export const thisMonth = () => new Date().toISOString().slice(0, 7);
 
 /**
- * Wspólna nawigacja miesiąca (←, etykieta, →, „Today”) dla wszystkich zakładek z wyborem miesiąca.
- * Fragment — rodzic dokłada własne elementy do swojego `.month-nav`. „Today” jest wyłączony (nie ukryty),
- * gdy wybrany jest bieżący miesiąc, żeby pasek się nie przesuwał.
+ * Shared month navigation (←, label, →, "Today") for all tabs with a month picker.
+ * A fragment — the parent adds its own elements to its `.month-nav`. "Today" is disabled (not hidden)
+ * when the current month is selected, so the bar does not shift.
  */
 export function MonthNav({ month, onChange }: { month: string; onChange: (m: string) => void }) {
   const current = thisMonth();

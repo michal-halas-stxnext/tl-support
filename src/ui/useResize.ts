@@ -6,9 +6,9 @@ export type Viewport = { w: number; h: number };
 export const SIZE_KEY = 'tl-support:size';
 export const MIN_SIZE: Size = { w: 480, h: 320 };
 const MARGIN = 16; // jak w fullscreen (inset)
-const BOTTOM_OFFSET = 76; // panel kotwiczony prawy-dół nad przyciskiem TL
+const BOTTOM_OFFSET = 76; // panel anchored bottom-right above the TL button
 
-/** Max = obszar fullscreen; wysokość pomniejszona o dolne kotwiczenie, by panel nie wyszedł poza ekran. */
+/** Max = fullscreen area; height reduced by the bottom anchor offset so the panel does not leave the screen. */
 export const maxSize = (vp: Viewport): Size => ({
   w: Math.max(MIN_SIZE.w, vp.w - 2 * MARGIN),
   h: Math.max(MIN_SIZE.h, vp.h - BOTTOM_OFFSET - MARGIN),
@@ -27,7 +27,7 @@ export function loadSize(): Size | undefined {
     const v = JSON.parse(localStorage.getItem(SIZE_KEY) ?? 'null');
     if (v && Number.isFinite(v.w) && Number.isFinite(v.h)) return { w: v.w, h: v.h };
   } catch {
-    /* brak dostępu / zły JSON */
+    /* no access / bad JSON */
   }
   return undefined;
 }
@@ -37,11 +37,11 @@ export function saveSize(s: Size | undefined) {
     if (s) localStorage.setItem(SIZE_KEY, JSON.stringify(s));
     else localStorage.removeItem(SIZE_KEY);
   } catch {
-    /* brak dostępu do storage — pomijamy */
+    /* no storage access — ignore */
   }
 }
 
-/** Aktualny viewport; odświeża się przy resize okna. */
+/** Current viewport; refreshes on window resize. */
 export function useViewport(): Viewport {
   const read = () => ({ w: window.innerWidth, h: window.innerHeight });
   const [vp, setVp] = useState(read);

@@ -24,7 +24,7 @@ describe('storage', () => {
     expect(await getSnapshot(db, '2026-11')).toEqual(snap('2026-11', 2));
     expect(await getSnapshot(db, '2026-10')).toBeUndefined();
   });
-  it('nadpisuje ten sam miesiąc, zachowuje inne', async () => {
+  it('overwrites the same month, keeps others', async () => {
     await saveSnapshot(db, snap('2026-10', 1));
     await saveSnapshot(db, snap('2026-11', 1));
     await saveSnapshot(db, snap('2026-11', 3));

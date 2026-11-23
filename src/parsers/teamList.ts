@@ -3,8 +3,8 @@ import { ParseError } from './errors';
 import { DEFAULT_TEAM_NAME, F, PAGE, profileUrl } from './teamList.selectors';
 
 /**
- * Odpowiedź API (JSON, nie HTML — patrz NOTES.md §1) → podopieczni wskazanego teamu.
- * Wejście: tekst JSON lub już sparsowana wartość.
+ * API response (JSON, not HTML — see NOTES.md §1) → team members of the given team.
+ * Input: JSON text or an already parsed value.
  */
 export function parseTeamList(input: string | unknown, teamName: string = DEFAULT_TEAM_NAME): Person[] {
   let data: unknown = input;

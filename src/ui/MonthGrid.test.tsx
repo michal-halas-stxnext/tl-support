@@ -16,7 +16,7 @@ const snap: Snapshot = {
   entries: [
     { personId: 'a', date: '2026-11-02', hours: 8, nonBillableHours: 0 },
     { personId: 'a', date: '2026-11-14', hours: 3.5, nonBillableHours: 0 }, // sobota
-    { personId: 'a', date: '2026-11-11', hours: 2, nonBillableHours: 1 }, // święto
+    { personId: 'a', date: '2026-11-11', hours: 2, nonBillableHours: 1 }, // holiday
   ],
 };
 
@@ -30,7 +30,7 @@ const cell = (root: HTMLElement, person: string, day: number) =>
 
 describe('MonthGrid', () => {
   const root = mount();
-  it('godziny w komórce, zwykły dzień bez klas specjalnych', () => {
+  it('hours in the cell, regular day without special classes', () => {
     expect(cell(root, 'a', 2).textContent).toBe('8');
     expect(cell(root, 'a', 2).className).toBe('cell');
   });
@@ -39,11 +39,11 @@ describe('MonthGrid', () => {
     expect(cell(root, 'a', 4).classList.contains('leave')).toBe(true);
     expect(cell(root, 'b', 3).classList.contains('leave')).toBe(false);
   });
-  it('weekend i święto', () => {
+  it('weekend and holiday', () => {
     expect(cell(root, 'b', 7).classList.contains('weekend')).toBe(true);
     expect(cell(root, 'b', 11).classList.contains('holiday')).toBe(true);
   });
-  it('praca w dzień wolny wyróżniona osobno (off-work), godziny widoczne', () => {
+  it('work on a day off is highlighted separately (off-work), hours visible', () => {
     const sat = cell(root, 'a', 14);
     expect(sat.classList.contains('weekend') && sat.classList.contains('off-work')).toBe(true);
     expect(sat.textContent).toBe('3,5');
@@ -58,17 +58,17 @@ describe('MonthGrid', () => {
     expect(row.querySelector('.norm')?.textContent).toBe('144'); // (20−2)×8
     expect(row.querySelector('.leave-days')?.textContent).toBe('2');
   });
-  it('własny dzień wolny jest oznaczony jako święto', () => {
+  it('a custom day off is marked as a holiday', () => {
     const r = mount({ ...DEFAULT_SETTINGS, customDaysOff: ['2026-11-13'] });
     expect(cell(r, 'b', 13).classList.contains('holiday')).toBe(true);
   });
-  it('wykluczona osoba znika, dodana ręcznie się pojawia', () => {
+  it('an excluded person disappears, a manually added one appears', () => {
     const r = mount({ ...DEFAULT_SETTINGS, excluded: ['b'], extraPeople: [{ id: 'z', name: 'Zofia' }] });
     expect(r.querySelector('tr[data-person="b"]')).toBeNull();
     expect(r.querySelector('tr[data-person="a"]')).not.toBeNull();
     expect(r.querySelector('tr[data-person="z"] th.name')?.textContent).toBe('Zofia');
   });
-  it('effectivePeople: bez duplikatów, wykluczenie dotyczy też dodanych', () => {
+  it('effectivePeople: no duplicates, exclusion also applies to added people', () => {
     const s = { ...DEFAULT_SETTINGS, extraPeople: [{ id: 'a', name: 'dup' }, { id: 'z', name: 'Z' }], excluded: ['z'] };
     expect(effectivePeople(snap.people, s).map((p) => p.id)).toEqual(['a', 'b']);
   });

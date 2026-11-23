@@ -1,6 +1,6 @@
 import { CancelledError } from './http';
 
-/** Uruchamia zadania z limitem równoległości i opóźnieniem przed każdym; błędy zbiera per zadanie. */
+/** Runs tasks with a concurrency limit and a delay before each; collects errors per task. */
 export async function runPool<T>(
   tasks: (() => Promise<T>)[],
   opts: { maxParallel: number; delayMs: number; signal?: AbortSignal },

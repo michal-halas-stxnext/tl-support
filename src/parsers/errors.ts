@@ -1,4 +1,4 @@
-/** Błąd parsowania: nazwa strony + brakujący element, zamiast cichych pustych wyników. */
+/** Parse error: page name + missing element, instead of silent empty results. */
 export class ParseError extends Error {
   constructor(
     public readonly page: string,

@@ -17,14 +17,14 @@ const s: Snapshot = {
 describe('snapshotToCsv', () => {
   const csv = snapshotToCsv(s);
   const lines = csv.split('\r\n');
-  it('BOM UTF-8, nagłówki, separator ;', () => {
+  it('UTF-8 BOM, headers, ; separator', () => {
     expect(csv.startsWith(CSV_BOM)).toBe(true);
     expect(lines[0]).toBe(CSV_BOM + 'Person;Date;Hours;Non-billable hours;Leave');
   });
-  it('wiersz z godzinami, przecinek dziesiętny i escapowanie', () => {
+  it('row with hours, decimal comma and escaping', () => {
     expect(lines[1]).toBe('"Anna ""Ania"" Ż;ółć";2026-11-02;7,5;0,25;');
   });
-  it('urlop rozwinięty na dni robocze bez świąt', () => {
+  it('leave expanded to working days excluding holidays', () => {
     expect(lines.slice(2, 4)).toEqual(['Bartek;2026-11-10;0;0;yes', 'Bartek;2026-11-12;0;0;yes']);
     expect(lines[4]).toBe('');
   });

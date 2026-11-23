@@ -24,12 +24,12 @@ const realDeps: ApprovalDeps = {
 };
 
 type Props = {
-  /** Wstrzykiwane w demo/testach; domyślnie prawdziwe API intranetu. */
+  /** Injected in demo/tests; defaults to the real intranet API. */
   deps?: ApprovalDeps;
   initialMonth?: string;
   lineManagerId?: string;
   confirmFn?: (text: string) => boolean;
-  /** Domyślnie non-billable (zwykle to je trzeba akceptować ręcznie). */
+  /** Defaults to non-billable (those usually need manual approval). */
   initialBillability?: BillabilityFilter;
 };
 

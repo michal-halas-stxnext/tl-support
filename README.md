@@ -1,59 +1,59 @@
 # TL Support
 
-Wtyczka przeglądarkowa (MV3: Chrome, Opera, Edge/Brave, Firefox, Safari) dla Koordynatora zespołu (Team Leadera). Intranet nie ma API, więc wtyczka wstrzykuje panel w stronę intranetu, pobiera HTML podstron z sesją użytkownika i pokazuje zagregowany obraz podopiecznych.
+A browser extension (MV3: Chrome, Opera, Edge/Brave, Firefox, Safari) for team coordinators (Team Leads). The intranet has no public API, so the extension injects a panel into the intranet page, fetches subpage HTML using the user's session, and shows an aggregated view of the team members.
 
-## Co robi
-- **Time logged** — miesięczna siatka godzin per osoba per dzień; urlopy, weekendy i święta PL wyróżnione.
-- **Approval** — akceptacja/odrzucanie wpisów (billable i non-billable) per osoba lub per wpis, przez API intranetu.
-- **Ustawienia** — wykluczenia/dodatkowe osoby, własne dni wolne, dzienna norma godzin.
-- Dane trzymane lokalnie w IndexedDB (nic nie opuszcza komputera); „Export CSV”, „Clear data”.
+## What it does
+- **Time logged** — monthly grid of hours per person per day; leaves, weekends and Polish holidays highlighted.
+- **Approval** — accept/reject entries (billable and non-billable) per person or per entry, via the intranet API.
+- **Settings** — excluded/extra people, custom days off, daily hours norm.
+- Data is stored locally in IndexedDB (nothing leaves your computer); "Export CSV", "Clear data".
 
-Konfiguracja (origin intranetu, team, limity zapytań): `src/config.ts`.
+Configuration (intranet origin, team, request limits): `src/config.ts`.
 
-## Wspierane przeglądarki
+## Supported browsers
 
-| Przeglądarka | Build | Katalog | Status |
+| Browser | Build | Directory | Notes |
 |---|---|---|---|
-| Chrome, Opera, Edge, Brave (Chromium) | `npm run build` | `dist/` | ten sam build dla wszystkich |
-| Firefox 115+ | `npm run build:firefox` | `dist-firefox/` | manifest z `browser_specific_settings.gecko` (id `tl-support@stxnext.pl`) |
-| Safari (macOS) | `npm run build:safari` | `dist-safari/` | projekt Xcode generowany z `dist/`; wymaga Xcode |
+| Chrome, Opera, Edge, Brave (Chromium) | `npm run build` | `dist/` | same build for all |
+| Firefox 115+ | `npm run build:firefox` | `dist-firefox/` | manifest with `browser_specific_settings.gecko` (id `tl-support@stxnext.pl`) |
+| Safari (macOS) | `npm run build:safari` | `dist-safari/` | Xcode project generated from `dist/`; requires Xcode |
 
-Kod używa tylko `chrome.storage.local` (działa we wszystkich trzech silnikach), więc różnice są wyłącznie w manifeście i sposobie instalacji.
+The code only uses `chrome.storage.local` (works in all three engines), so the differences are limited to the manifest and the installation method.
 
-## Instalacja (tryb deweloperski)
-Najpierw: `npm install`.
+## Installation (development mode)
+First: `npm install`.
 
 ### Chrome / Opera / Edge / Brave
 1. `npm run build`
-2. Otwórz stronę rozszerzeń: `chrome://extensions` (Opera: `opera://extensions`, Edge: `edge://extensions`, Brave: `brave://extensions`).
-3. Włącz „Tryb dewelopera” → „Załaduj rozpakowane” → wskaż `dist/`.
+2. Open the extensions page: `chrome://extensions` (Opera: `opera://extensions`, Edge: `edge://extensions`, Brave: `brave://extensions`).
+3. Enable "Developer mode" → "Load unpacked" → select `dist/`.
 
 ### Firefox
 1. `npm run build:firefox`
-2. Otwórz `about:debugging#/runtime/this-firefox` → „Załaduj tymczasowy dodatek…” → wskaż `dist-firefox/manifest.json`.
-3. Dodatek znika po restarcie Firefoksa. Trwała instalacja wymaga podpisu przez AMO (addons.mozilla.org, kanał „unlisted”).
-4. Jeśli panel nie pojawia się, sprawdź uprawnienia dodatku do intranetu: `about:addons` → TL Support → Uprawnienia.
+2. Open `about:debugging#/runtime/this-firefox` → "Load Temporary Add-on…" → select `dist-firefox/manifest.json`.
+3. The add-on disappears after Firefox restarts. Permanent installation requires signing via AMO (addons.mozilla.org, "unlisted" channel).
+4. If the panel does not appear, check the add-on's access to the intranet: `about:addons` → TL Support → Permissions.
 
 ### Safari (macOS)
-Wymaga pełnego Xcode (nie samych Command Line Tools) i `xcode-select` wskazującego na Xcode.
-1. `npm run build:safari` — buduje `dist/` i generuje projekt w `dist-safari/` przez `safari-web-extension-converter`.
-2. Otwórz wygenerowany `.xcodeproj` w Xcode → wybierz schemat „TL Support (macOS)” → Run.
-3. Safari → Ustawienia → Zaawansowane → „Pokaż menu Programowanie”; Programowanie → „Zezwalaj na niepodpisane rozszerzenia” (opcja resetuje się po restarcie Safari).
-4. Safari → Ustawienia → Rozszerzenia → włącz TL Support i przyznaj dostęp do intranetu („Zawsze zezwalaj na tej stronie”).
-5. Dystrybucja poza własnym Makiem wymaga konta Apple Developer.
+Requires full Xcode (not just the Command Line Tools) and `xcode-select` pointing to Xcode.
+1. `npm run build:safari` — builds `dist/` and generates a project in `dist-safari/` using `safari-web-extension-converter`.
+2. Open the generated `.xcodeproj` in Xcode → select the "TL Support (macOS)" scheme → Run.
+3. Safari → Settings → Advanced → "Show features for web developers" (Develop menu); Develop → "Allow Unsigned Extensions" (resets after Safari restarts).
+4. Safari → Settings → Extensions → enable TL Support and grant access to the intranet ("Always Allow on This Website").
+5. Distribution beyond your own Mac requires an Apple Developer account.
 
-## Użycie
-1. Zainstaluj wtyczkę (patrz wyżej).
-2. Otwórz intranet → przycisk „TL” w prawym dolnym rogu → panel → „Refresh”.
+## Usage
+1. Install the extension (see above).
+2. Open the intranet → "TL" button in the bottom-right corner → panel → "Refresh".
 
-## Znane ograniczenia
-- Firefox i Safari: nie przetestowane na żywo z intranetem; loader content scriptu generowany przez `@crxjs/vite-plugin` może wymagać poprawek.
-- Safari: `build:safari` nie był uruchamiany na maszynie bez Xcode.
-- Dane (IndexedDB, ustawienia) są osobne w każdej przeglądarce i profilu.
+## Known limitations
+- Firefox and Safari: not tested live against the intranet; the content-script loader generated by `@crxjs/vite-plugin` may need fixes.
+- Safari: `build:safari` has not been run (no Xcode on the development machine).
+- Data (IndexedDB, settings) is separate in each browser and profile.
 
-## Skrypty
-- `npm run dev` — serwer deweloperski (HMR); tryb demo bez intranetu: `demo.html`
-- `npm run build` — build do `dist/` (Chromium)
-- `npm run build:firefox` — build do `dist-firefox/`
-- `npm run build:safari` — build + projekt Xcode w `dist-safari/`
+## Scripts
+- `npm run dev` — dev server (HMR); demo mode without the intranet: `demo.html`
+- `npm run build` — build to `dist/` (Chromium)
+- `npm run build:firefox` — build to `dist-firefox/`
+- `npm run build:safari` — build + Xcode project in `dist-safari/`
 - `npm test` — Vitest

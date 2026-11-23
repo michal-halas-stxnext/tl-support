@@ -24,7 +24,7 @@ const snap: Snapshot = {
   holidays: page.holidays,
 };
 
-// Mock zapisu: stan w pamięci, bez intranetu.
+// Write mock: in-memory state, no intranet.
 let approvalEntries = [...parseApprovalEntries(fx('timesheet-approval-billable.json')), ...parseApprovalEntries(fx('timesheet-approval-nonbillable.json'))];
 const setState = (ids: string[], state: 'ACCEPTED' | 'REJECTED') => {
   approvalEntries = approvalEntries.map((e) => (ids.includes(e.id) ? { ...e, state, canAccept: state === 'REJECTED', canReject: state === 'ACCEPTED' } : e));

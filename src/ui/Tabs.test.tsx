@@ -20,13 +20,13 @@ describe('Tabs', () => {
     expect(root.querySelector('.c-a')).not.toBeNull();
   });
 
-  it('domyślny rejestr: Time logged + Approval', () => {
+  it('default registry: Time logged + Approval', () => {
     const root = document.createElement('div');
     render(<Tabs />, root);
     expect(Array.from(root.querySelectorAll('[role=tab]')).map((x) => x.textContent)).toEqual(['Time logged', 'Approval']);
   });
 
-  it('klik i klawiatura (←/→, Home/End), zapamiętanie, stała liczba węzłów paska', async () => {
+  it('click and keyboard (←/→, Home/End), remembers selection, constant number of bar nodes', async () => {
     const root = document.createElement('div');
     document.body.append(root);
     render(<Tabs tabs={tabs} />, root);

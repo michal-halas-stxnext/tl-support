@@ -5,7 +5,7 @@ import { MonthView } from './MonthView';
 
 export type TabDef = { id: string; label: string; component: ComponentType };
 
-/** Rejestr tabów — nowy tab = jeden wpis. */
+/** Tab registry — a new tab = one entry. */
 export const TABS: TabDef[] = [
   { id: 'time-logged', label: 'Time logged', component: () => <MonthView /> },
   { id: 'approval', label: 'Approval', component: () => <ApprovalView /> },
@@ -24,7 +24,7 @@ function saveTab(id: string) {
   try {
     localStorage.setItem(TAB_KEY, id);
   } catch {
-    /* brak dostępu do storage — pomijamy */
+    /* no storage access — ignore */
   }
 }
 

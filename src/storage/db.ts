@@ -27,7 +27,7 @@ export function openDb(name = DEFAULT_DB): Promise<IDBDatabase> {
   });
 }
 
-/** Zapis snapshotu; ten sam miesiąc jest nadpisywany, inne zostają (historia). */
+/** Saves a snapshot; the same month is overwritten, others stay (history). */
 export async function saveSnapshot(db: IDBDatabase, s: Snapshot): Promise<void> {
   const tx = db.transaction(STORE, 'readwrite');
   tx.objectStore(STORE).put(s);
@@ -38,7 +38,7 @@ export async function getSnapshot(db: IDBDatabase, month: string): Promise<Snaps
   return req(db.transaction(STORE).objectStore(STORE).get(month));
 }
 
-/** Zapisane miesiące (`YYYY-MM`), rosnąco. */
+/** Saved months (`YYYY-MM`), ascending. */
 export async function listMonths(db: IDBDatabase): Promise<string[]> {
   const keys = await req(db.transaction(STORE).objectStore(STORE).getAllKeys());
   return (keys as string[]).sort();

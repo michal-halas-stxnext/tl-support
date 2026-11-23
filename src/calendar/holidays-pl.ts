@@ -30,8 +30,8 @@ export function holidaysPl(year: number): IsoDate[] {
     p(1, 1), p(1, 6),
     toIso(easter), toIso(plusDays(easter, 1)),
     p(5, 1), p(5, 3),
-    toIso(plusDays(easter, 49)), // Zielone Świątki
-    toIso(plusDays(easter, 60)), // Boże Ciało
+    toIso(plusDays(easter, 49)), // Pentecost
+    toIso(plusDays(easter, 60)), // Corpus Christi
     p(8, 15), p(11, 1), p(11, 11),
     p(12, 25), p(12, 26),
   ];
