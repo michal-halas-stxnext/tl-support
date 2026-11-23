@@ -1,19 +1,22 @@
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
+import { collectMonth } from '../collector/collect';
 import type { Snapshot } from '../domain/types';
-import { getSnapshot, openDb } from '../storage/db';
-import { DEFAULT_SETTINGS, loadSettings, saveSettings, type Settings } from '../settings/settings';
+import { getSnapshot, openDb, saveSnapshot } from '../storage/db';
+import { DataActions } from './DataActions';
 import { Legend, MonthGrid } from './MonthGrid';
-import { MonthNav, thisMonth } from './MonthNav';
-import { RefreshBar } from './RefreshBar';
-import { SettingsPanel } from './Settings';
+import { usePanel } from './PanelContext';
+import { useRefresh } from './useRefresh';
 
 export { shiftMonth } from './MonthNav';
 
 type Props = {
   /** Injected in demo mode / tests; defaults to IndexedDB. */
   loadSnapshot?: (month: string) => Promise<Snapshot | undefined>;
-  initialMonth?: string;
-  /** Demo mode: no buttons that fetch from the intranet. */
+  /** Injected in tests; defaults to the intranet collector. */
+  collect?: typeof collectMonth;
+  /** Injected in tests; defaults to IndexedDB. */
+  save?: (s: Snapshot) => Promise<void>;
+  /** Demo mode: Refresh only reloads, no intranet fetch; no Export/Clear. */
   demo?: boolean;
 };
 
@@ -25,39 +28,41 @@ async function fromDb(month: string) {
     db.close();
   }
 }
+async function toDb(s: Snapshot) {
+  const db = await openDb();
+  try {
+    await saveSnapshot(db, s);
+  } finally {
+    db.close();
+  }
+}
 
-export function MonthView({ loadSnapshot = fromDb, initialMonth, demo = false }: Props) {
-  const [month, setMonth] = useState(initialMonth ?? thisMonth());
+export function MonthView({ loadSnapshot = fromDb, collect = collectMonth, save = toDb, demo = false }: Props) {
+  const { month, settings, lineManagerId, setLoggedOut, setPeople } = usePanel();
   const [snapshot, setSnapshot] = useState<Snapshot | undefined>();
   const [loaded, setLoaded] = useState(false);
-  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
-  const [showSettings, setShowSettings] = useState(false);
   const [reload, setReload] = useState(0);
-  const anchor = useRef<HTMLSpanElement>(null);
 
-  // Settings: close on click outside or Escape (Escape does not reach the rest of the panel).
-  useEffect(() => {
-    if (!showSettings) return;
-    const onDown = (e: Event) => {
-      const el = anchor.current;
-      if (el && !e.composedPath().includes(el)) setShowSettings(false);
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== 'Escape') return;
-      e.stopPropagation();
-      setShowSettings(false);
-    };
-    document.addEventListener('pointerdown', onDown, true);
-    document.addEventListener('keydown', onKey, true);
-    return () => {
-      document.removeEventListener('pointerdown', onDown, true);
-      document.removeEventListener('keydown', onKey, true);
-    };
-  }, [showSettings]);
+  const refresh = useRefresh(async ({ signal, onProgress }) => {
+    if (demo) {
+      setReload((n) => n + 1);
+      return { status: `Reloaded ${month}` };
+    }
+    const r = await collect({ month, lineManagerId: lineManagerId!, extraPeople: settings.extraPeople, signal, onProgress });
+    if (r.loggedOut) {
+      setLoggedOut(true);
+      return { errors: r.errors };
+    }
+    setLoggedOut(false);
+    if (r.cancelled) return { status: 'Cancelled', errors: r.errors };
+    if (r.snapshot && r.errors.length === 0) {
+      await save(r.snapshot);
+      setReload((n) => n + 1);
+      return { status: `Saved ${month}` };
+    }
+    return { status: 'Not saved — fetch incomplete', errors: r.errors };
+  });
 
-  useEffect(() => {
-    loadSettings().then(setSettings);
-  }, []);
   useEffect(() => {
     let alive = true;
     setLoaded(false);
@@ -67,6 +72,7 @@ export function MonthView({ loadSnapshot = fromDb, initialMonth, demo = false }:
         if (alive) {
           setSnapshot(s);
           setLoaded(true);
+          if (s) setPeople(s.people);
         }
       });
     return () => {
@@ -74,22 +80,11 @@ export function MonthView({ loadSnapshot = fromDb, initialMonth, demo = false }:
     };
   }, [month, reload]);
 
-  const change = (s: Settings) => {
-    setSettings(s);
-    void saveSettings(s);
-  };
+  const fetched = snapshot ? `Refreshed: ${new Date(snapshot.fetchedAt).toLocaleString('en-GB')}` : '';
 
   return (
     <div class="month-view">
-      <div class="month-nav">
-        <MonthNav month={month} onChange={setMonth} />
-        <span class="settings-anchor" ref={anchor}>
-          <button type="button" class="btn settings-toggle" aria-pressed={showSettings} onClick={() => setShowSettings(!showSettings)}>Settings</button>
-          {showSettings && <SettingsPanel settings={settings} people={snapshot?.people ?? []} onChange={change} />}
-        </span>
-        <span class="fetched">{snapshot ? `Refreshed: ${new Date(snapshot.fetchedAt).toLocaleString('en-GB')}` : ''}</span>
-      </div>
-      {!demo && <RefreshBar month={month} extraPeople={settings.extraPeople} onData={() => setReload((n) => n + 1)} />}
+      <DataActions month={month} fetched={fetched} refresh={refresh} demo={demo} onData={() => setReload((n) => n + 1)} />
       <div class="content">
         {!loaded && <div class="loading" role="status" aria-label="Loading" />}
         {loaded && !snapshot && <p class="no-data">No data for {month} — click “Refresh”.</p>}

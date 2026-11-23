@@ -4,6 +4,8 @@ import { groupByPerson } from '../approval/model';
 import { LoggedOutError } from '../collector/http';
 import { parseApprovalEntries } from '../parsers/approval';
 import { ApprovalView, type ApprovalDeps } from './ApprovalView';
+import { PanelProvider } from './PanelContext';
+import { Toolbar } from './Toolbar';
 
 const files = import.meta.glob('../../fixtures/timesheet-approval-{billable,nonbillable}.json', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
 const all = Object.values(files).flatMap((c) => parseApprovalEntries(c));
@@ -18,7 +20,13 @@ function setup(over: Partial<ApprovalDeps> = {}, confirmFn = () => true) {
   };
   const root = document.createElement('div');
   document.body.append(root);
-  render(<ApprovalView deps={deps} initialMonth="2026-11" lineManagerId="1" confirmFn={confirmFn} initialBillability="all" />, root);
+  render(
+    <PanelProvider initialMonth="2026-11" lineManagerId="1">
+      <Toolbar />
+      <ApprovalView deps={deps} confirmFn={confirmFn} initialBillability="all" />
+    </PanelProvider>,
+    root,
+  );
   return { root, deps };
 }
 const q = <T extends Element>(r: Element, s: string) => r.querySelector(s) as T;
@@ -42,7 +50,13 @@ describe('ApprovalView', () => {
 
   it('default filter: non-billable; "Today" returns to the current month', async () => {
     const root = document.createElement('div');
-    render(<ApprovalView deps={{ fetchEntries: async () => all, accept: async () => ({ ok: [], failed: [] }), reject: async () => ({ ok: [], failed: [] }) }} initialMonth="2000-01" lineManagerId="1" />, root);
+    render(
+      <PanelProvider initialMonth="2000-01" lineManagerId="1">
+        <Toolbar />
+        <ApprovalView deps={{ fetchEntries: async () => all, accept: async () => ({ ok: [], failed: [] }), reject: async () => ({ ok: [], failed: [] }) }} />
+      </PanelProvider>,
+      root,
+    );
     await tick();
     expect(q<HTMLSelectElement>(root, '.billability').value).toBe('non');
     expect(root.querySelectorAll('.entry, .person')).toHaveLength(groupByPerson(all, { billability: 'non', state: 'OPEN' }).length);
@@ -131,7 +145,7 @@ describe('ApprovalView', () => {
 
     const out = setup({ fetchEntries: async () => { throw new LoggedOutError(); } });
     await tick();
-    expect(q(out.root, '.approval-status').textContent).toBe('Log in to the intranet');
+    expect(q(out.root, '.toolbar .status.session').textContent).toBe('Log in to the intranet');
   });
 
   it('changing the month fetches data', async () => {
@@ -141,5 +155,22 @@ describe('ApprovalView', () => {
     await tick();
     expect(q(root, '.month-label').textContent).toBe('2026-10');
     expect(deps.fetchEntries).toHaveBeenLastCalledWith('2026-10', '1');
+  });
+
+  it('no Refresh button on the Approval tab (toolbar has none)', async () => {
+    const { root } = setup();
+    await tick();
+    expect(root.querySelector('.toolbar .refresh, .toolbar .cancel')).toBeNull();
+    expect(root.querySelector('.toolbar .month-label')).not.toBeNull();
+  });
+
+  it('person excluded in Settings disappears from the list', async () => {
+    const g = groupByPerson(all)[0]!;
+    localStorage.setItem('tl-support:settings', JSON.stringify({ excluded: [g.personId] }));
+    const { root } = setup();
+    await tick();
+    localStorage.removeItem('tl-support:settings');
+    expect(root.querySelector(`.person[data-person="${g.personId}"]`)).toBeNull();
+    expect(root.querySelectorAll('.person')).toHaveLength(groupByPerson(all).length - 1);
   });
 });
