@@ -1,3 +1,5 @@
+> Historical brief. Superseded after implementation: Refresh lives in the Time logged row (not in the toolbar, none on Approval), and an in-panel dialog replaced native confirm(). See README and 01-global-toolbar.md for the final state.
+
 # Brief: 01 Global toolbar
 
 You are working in the TL Support browser extension repo (Preact + TS + Vite). Read `AGENTS.md` first and follow it (English-only repo content, shared `MonthNav`, Settings popup Escape rules, narrowest tests, `git switch`).
