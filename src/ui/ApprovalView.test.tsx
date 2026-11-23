@@ -18,7 +18,7 @@ function setup(over: Partial<ApprovalDeps> = {}, confirmFn = () => true) {
   };
   const root = document.createElement('div');
   document.body.append(root);
-  render(<ApprovalView deps={deps} initialMonth="2026-11" lineManagerId="1" confirmFn={confirmFn} />, root);
+  render(<ApprovalView deps={deps} initialMonth="2026-11" lineManagerId="1" confirmFn={confirmFn} initialBillability="all" />, root);
   return { root, deps };
 }
 const q = <T extends Element>(r: Element, s: string) => r.querySelector(s) as T;
@@ -38,6 +38,18 @@ describe('ApprovalView', () => {
     const h = (m: number) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
     expect(q(row, '.bill').textContent).toBe(h(g.billableMinutes));
     expect(q(row, '.nb').textContent).toBe(`+${h(g.nonBillableMinutes)}`);
+  });
+
+  it('domyślny filtr: non-billable; „Today” wraca do bieżącego miesiąca', async () => {
+    const root = document.createElement('div');
+    render(<ApprovalView deps={{ fetchEntries: async () => all, accept: async () => ({ ok: [], failed: [] }), reject: async () => ({ ok: [], failed: [] }) }} initialMonth="2000-01" lineManagerId="1" />, root);
+    await tick();
+    expect(q<HTMLSelectElement>(root, '.billability').value).toBe('non');
+    expect(root.querySelectorAll('.entry, .person')).toHaveLength(groupByPerson(all, { billability: 'non', state: 'OPEN' }).length);
+    (q(root, '.today') as HTMLButtonElement).click();
+    await tick();
+    expect(q(root, '.month-label').textContent).toBe(new Date().toISOString().slice(0, 7));
+    expect((q(root, '.today') as HTMLButtonElement).disabled).toBe(true);
   });
 
   it('filtry billability i stanu zmieniają listę', async () => {
@@ -61,7 +73,7 @@ describe('ApprovalView', () => {
     expect(confirmFn).toHaveBeenCalled();
     expect(deps.accept).toHaveBeenCalledWith(g.entries.map((e) => e.id));
     expect(deps.fetchEntries).toHaveBeenCalledTimes(2);
-    expect(q(root, '.approval-status').textContent).toContain(`Zaakceptowano: ${g.entries.length}`);
+    expect(q(root, '.approval-status').textContent).toContain(`Accepted: ${g.entries.length}`);
   });
 
   it('odmowa w potwierdzeniu → brak wywołania', async () => {
@@ -114,12 +126,12 @@ describe('ApprovalView', () => {
     (q(root, '.acc-one') as HTMLButtonElement | null)?.click();
     (q(root, '.acc-all') as HTMLButtonElement).click();
     await tick();
-    expect(q(root, '.approval-status').textContent).toMatch(/błąd: 1 \(HTTP 500\)/);
+    expect(q(root, '.approval-status').textContent).toMatch(/failed: 1 \(HTTP 500\)/);
     expect(bar.children.length).toBe(before);
 
     const out = setup({ fetchEntries: async () => { throw new LoggedOutError(); } });
     await tick();
-    expect(q(out.root, '.approval-status').textContent).toBe('Zaloguj się do intranetu');
+    expect(q(out.root, '.approval-status').textContent).toBe('Log in to the intranet');
   });
 
   it('zmiana miesiąca pobiera dane', async () => {

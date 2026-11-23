@@ -10,16 +10,16 @@ export function parseApprovalEntries(input: string | unknown): ApprovalEntry[] {
     try {
       data = JSON.parse(input);
     } catch {
-      throw new ParseError(PAGE, 'poprawny JSON');
+      throw new ParseError(PAGE, 'valid JSON');
     }
   }
-  if (!data || !Array.isArray(data.columns)) throw new ParseError(PAGE, 'pole `columns`');
-  if (!Array.isArray(data.rows)) throw new ParseError(PAGE, 'pole `rows`');
+  if (!data || !Array.isArray(data.columns)) throw new ParseError(PAGE, 'field `columns`');
+  if (!Array.isArray(data.rows)) throw new ParseError(PAGE, 'field `rows`');
 
   const ix = {} as Record<keyof typeof C, number>;
   for (const [k, col] of Object.entries(C) as [keyof typeof C, string][]) {
     const i = (data.columns as string[]).indexOf(col);
-    if (i < 0) throw new ParseError(PAGE, `kolumna \`${col}\``);
+    if (i < 0) throw new ParseError(PAGE, `column \`${col}\``);
     ix[k] = i;
   }
 
@@ -30,7 +30,7 @@ export function parseApprovalEntries(input: string | unknown): ApprovalEntry[] {
     const date = parsePlDate(row[ix.date]);
     const minutes = parseHm(row[ix.time]);
     if (!id || !personId || !date || minutes === null) {
-      throw new ParseError(PAGE, `poprawny wiersz #${n} (id/user_id/data/czas)`);
+      throw new ParseError(PAGE, `valid row #${n} (id/user_id/date/time)`);
     }
     return {
       id,

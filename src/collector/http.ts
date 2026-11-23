@@ -2,14 +2,14 @@ import { INTRANET_ORIGIN } from '../config';
 
 export class LoggedOutError extends Error {
   constructor() {
-    super('Zaloguj się do intranetu');
+    super('Log in to the intranet');
     this.name = 'LoggedOutError';
   }
 }
 
 export class CancelledError extends Error {
   constructor() {
-    super('Anulowano');
+    super('Cancelled');
     this.name = 'CancelledError';
   }
 }
@@ -17,7 +17,7 @@ export class CancelledError extends Error {
 /** Buduje URL i gwarantuje origin intranetu — jedyna droga do `fetch` w kolektorze. */
 export function intranetUrl(pathAndQuery: string): string {
   const u = new URL(pathAndQuery, INTRANET_ORIGIN);
-  if (u.origin !== INTRANET_ORIGIN) throw new Error(`Zablokowano żądanie poza intranet: ${u.origin}`);
+  if (u.origin !== INTRANET_ORIGIN) throw new Error(`Blocked request outside the intranet: ${u.origin}`);
   return u.toString();
 }
 

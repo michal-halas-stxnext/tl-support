@@ -40,7 +40,7 @@ async function send(fetchFn: FetchLike, action: ApprovalAction, ids: string[], s
       );
       for (const id of chunk) {
         if (done.has(id)) res.ok.push(id);
-        else res.failed.push({ id, error: 'Brak potwierdzenia w odpowiedzi' });
+        else res.failed.push({ id, error: 'Not confirmed in the response' });
       }
     } catch (e) {
       if (e instanceof Error && (e.name === 'LoggedOutError' || e.name === 'CancelledError')) throw e;

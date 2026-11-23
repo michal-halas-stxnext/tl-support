@@ -4,7 +4,7 @@ export class ParseError extends Error {
     public readonly page: string,
     public readonly missing: string,
   ) {
-    super(`[${page}] nie znaleziono: ${missing}`);
+    super(`[${page}] not found: ${missing}`);
     this.name = 'ParseError';
   }
 }

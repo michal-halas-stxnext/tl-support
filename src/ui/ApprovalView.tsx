@@ -4,12 +4,11 @@ import { groupByPerson, type BillabilityFilter } from '../approval/model';
 import { detectLineManagerId } from '../collector/collect';
 import { LoggedOutError, type FetchLike } from '../collector/http';
 import type { ApprovalEntry } from '../domain/types';
-import { shiftMonth } from './MonthView';
+import { MonthNav, thisMonth } from './MonthNav';
 
-const thisMonth = () => new Date().toISOString().slice(0, 7);
 const hm = (min: number) => `${Math.floor(min / 60)}:${String(min % 60).padStart(2, '0')}`;
 const msg = (e: unknown) => (e instanceof Error ? e.message : String(e));
-const STATE_LABEL: Record<string, string> = { OPEN: 'Do akceptacji', ACCEPTED: 'Zaakceptowane', REJECTED: 'Odrzucone' };
+const STATE_LABEL: Record<string, string> = { OPEN: 'Pending', ACCEPTED: 'Accepted', REJECTED: 'Rejected' };
 
 export type ApprovalDeps = {
   fetchEntries: (month: string, lineManagerId: string) => Promise<ApprovalEntry[]>;
@@ -30,14 +29,16 @@ type Props = {
   initialMonth?: string;
   lineManagerId?: string;
   confirmFn?: (text: string) => boolean;
+  /** Domyślnie non-billable (zwykle to je trzeba akceptować ręcznie). */
+  initialBillability?: BillabilityFilter;
 };
 
-export function ApprovalView({ deps = realDeps, initialMonth, lineManagerId, confirmFn = (t) => confirm(t) }: Props) {
+export function ApprovalView({ deps = realDeps, initialMonth, lineManagerId, confirmFn = (t) => confirm(t), initialBillability = 'non' }: Props) {
   const [month, setMonth] = useState(initialMonth ?? thisMonth());
   const [entries, setEntries] = useState<ApprovalEntry[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [billability, setBillability] = useState<BillabilityFilter>('all');
+  const [billability, setBillability] = useState<BillabilityFilter>(initialBillability);
   const [state, setState] = useState('OPEN');
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -49,7 +50,7 @@ export function ApprovalView({ deps = realDeps, initialMonth, lineManagerId, con
     const lm = lineManagerId ?? detectLineManagerId();
     if (!lm) {
       setLoaded(true);
-      setStatus({ text: 'Nie rozpoznano zalogowanego użytkownika — otwórz zwykłą stronę intranetu.', error: true });
+      setStatus({ text: 'Could not detect the logged-in user — open a regular intranet page.', error: true });
       return;
     }
     setLoaded(false);
@@ -63,7 +64,7 @@ export function ApprovalView({ deps = realDeps, initialMonth, lineManagerId, con
       .catch((e) => {
         if (!alive) return;
         setEntries([]);
-        setStatus({ text: e instanceof LoggedOutError ? 'Zaloguj się do intranetu' : `Błąd: ${msg(e)}`, error: true });
+        setStatus({ text: e instanceof LoggedOutError ? 'Log in to the intranet' : `Error: ${msg(e)}`, error: true });
       })
       .finally(() => alive && setLoaded(true));
     return () => {
@@ -77,18 +78,18 @@ export function ApprovalView({ deps = realDeps, initialMonth, lineManagerId, con
 
   async function run(kind: 'accept' | 'reject', ids: string[]) {
     if (ids.length === 0 || busy) return;
-    const verb = kind === 'accept' ? 'Zaakceptować' : 'Odrzucić';
-    if (ids.length > 1 && !confirmFn(`${verb} ${ids.length} wpisów? Nie można wrócić do stanu „do akceptacji”.`)) return;
+    const verb = kind === 'accept' ? 'Accept' : 'Reject';
+    if (ids.length > 1 && !confirmFn(`${verb} ${ids.length} entries? Entries cannot be returned to “Pending”.`)) return;
     setBusy(true);
     setStatus({ text: '' });
     try {
       const r = await (kind === 'accept' ? deps.accept : deps.reject)(ids);
-      const done = kind === 'accept' ? 'Zaakceptowano' : 'Odrzucono';
+      const done = kind === 'accept' ? 'Accepted' : 'Rejected';
       if (r.failed.length === 0) setStatus({ text: `${done}: ${r.ok.length}` });
-      else setStatus({ text: `${done}: ${r.ok.length}, błąd: ${r.failed.length} (${r.failed[0]!.error})`, error: true });
+      else setStatus({ text: `${done}: ${r.ok.length}, failed: ${r.failed.length} (${r.failed[0]!.error})`, error: true });
       setReload((n) => n + 1);
     } catch (e) {
-      setStatus({ text: e instanceof LoggedOutError ? 'Zaloguj się do intranetu' : `Błąd: ${msg(e)}`, error: true });
+      setStatus({ text: e instanceof LoggedOutError ? 'Log in to the intranet' : `Error: ${msg(e)}`, error: true });
     } finally {
       setBusy(false);
     }
@@ -106,16 +107,14 @@ export function ApprovalView({ deps = realDeps, initialMonth, lineManagerId, con
   return (
     <div class="approval-view">
       <div class="month-nav">
-        <button type="button" class="btn ghost prev" aria-label="Poprzedni miesiąc" onClick={() => setMonth(shiftMonth(month, -1))}>←</button>
-        <strong class="month-label">{month}</strong>
-        <button type="button" class="btn ghost next" aria-label="Następny miesiąc" onClick={() => setMonth(shiftMonth(month, 1))}>→</button>
-        <select class="sel billability" aria-label="Rodzaj godzin" value={billability} onChange={(e) => setBillability((e.target as HTMLSelectElement).value as BillabilityFilter)}>
-          <option value="all">Wszystkie</option>
+        <MonthNav month={month} onChange={setMonth} />
+        <select class="sel billability" aria-label="Hours type" value={billability} onChange={(e) => setBillability((e.target as HTMLSelectElement).value as BillabilityFilter)}>
+          <option value="all">All</option>
           <option value="billable">Billable</option>
           <option value="non">Non-billable</option>
         </select>
-        <select class="sel state" aria-label="Stan" value={state} onChange={(e) => setState((e.target as HTMLSelectElement).value)}>
-          <option value="all">Każdy stan</option>
+        <select class="sel state" aria-label="State" value={state} onChange={(e) => setState((e.target as HTMLSelectElement).value)}>
+          <option value="all">Any state</option>
           {states.map((s) => (
             <option value={s}>{STATE_LABEL[s] ?? s}</option>
           ))}
@@ -124,48 +123,48 @@ export function ApprovalView({ deps = realDeps, initialMonth, lineManagerId, con
       <div class="approval-bar">
         <span class="sel-actions">
           <button type="button" class="btn sm primary acc-sel" disabled={busy || idsOf(selectedEntries, 'accept').length === 0} onClick={() => run('accept', idsOf(selectedEntries, 'accept'))}>
-            Akceptuj zaznaczone ({selected.size})
+            Accept selected ({selected.size})
           </button>
           <button type="button" class="btn sm danger rej-sel" disabled={busy || idsOf(selectedEntries, 'reject').length === 0} onClick={() => run('reject', idsOf(selectedEntries, 'reject'))}>
-            Odrzuć zaznaczone
+            Reject selected
           </button>
         </span>
         <span class={status.error ? 'approval-status err' : 'approval-status'} role="status" title={status.text}>{status.text}</span>
       </div>
       <div class="content approval-list">
-        {!loaded && <div class="loading" role="status" aria-label="Ładowanie" />}
-        {loaded && groups.length === 0 && <p class="empty">Brak wpisów dla wybranych filtrów.</p>}
+        {!loaded && <div class="loading" role="status" aria-label="Loading" />}
+        {loaded && groups.length === 0 && <p class="empty">No entries for the selected filters.</p>}
         {loaded &&
           groups.map((g) => {
             const open = expanded.has(g.personId);
             return (
               <section class="person" data-person={g.personId}>
                 <div class="person-row">
-                  <button type="button" class="btn ghost sm toggle" aria-expanded={open} aria-label={`${open ? 'Zwiń' : 'Rozwiń'} ${g.personName}`} onClick={() => setExpanded(toggle(expanded, g.personId))}>
+                  <button type="button" class="btn ghost sm toggle" aria-expanded={open} aria-label={`${open ? 'Collapse' : 'Expand'} ${g.personName}`} onClick={() => setExpanded(toggle(expanded, g.personId))}>
                     {open ? '▾' : '▸'}
                   </button>
                   <strong class="pname">{g.personName}</strong>
                   <span class="sums">
                     <span class="bill">{hm(g.billableMinutes)}</span>
                     {g.nonBillableMinutes > 0 && <span class="nb" title="Non-billable">+{hm(g.nonBillableMinutes)}</span>}
-                    <span class="cnt">{g.entries.length} wpis.</span>
+                    <span class="cnt">{g.entries.length} entries</span>
                   </span>
-                  <button type="button" class="btn sm primary acc-all" disabled={busy || idsOf(g.entries, 'accept').length === 0} onClick={() => run('accept', idsOf(g.entries, 'accept'))}>Akceptuj wszystko</button>
-                  <button type="button" class="btn sm danger rej-all" disabled={busy || idsOf(g.entries, 'reject').length === 0} onClick={() => run('reject', idsOf(g.entries, 'reject'))}>Odrzuć wszystko</button>
+                  <button type="button" class="btn sm primary acc-all" disabled={busy || idsOf(g.entries, 'accept').length === 0} onClick={() => run('accept', idsOf(g.entries, 'accept'))}>Accept all</button>
+                  <button type="button" class="btn sm danger rej-all" disabled={busy || idsOf(g.entries, 'reject').length === 0} onClick={() => run('reject', idsOf(g.entries, 'reject'))}>Reject all</button>
                 </div>
                 {open && (
                   <ul class="entries">
                     {g.entries.map((e) => (
                       <li class="entry" data-entry={e.id}>
-                        <input type="checkbox" aria-label={`Zaznacz wpis ${e.date}`} checked={selected.has(e.id)} disabled={!e.canAccept && !e.canReject} onChange={() => setSelected(toggle(selected, e.id))} />
+                        <input type="checkbox" aria-label={`Select entry ${e.date}`} checked={selected.has(e.id)} disabled={!e.canAccept && !e.canReject} onChange={() => setSelected(toggle(selected, e.id))} />
                         <span class="d">{e.date.slice(5)}</span>
                         <span class="t">{hm(e.minutes)}</span>
                         {e.nonBillable && <span class="badge nb-badge">non-billable</span>}
                         <span class="p" title={e.project}>{e.project}</span>
                         <span class="desc" title={e.description}>{e.description.replace(/\s+/g, ' ')}</span>
                         <span class={`st st-${e.state}`}>{STATE_LABEL[e.state] ?? e.state}</span>
-                        <button type="button" class="btn sm ghost acc-one" aria-label="Akceptuj wpis" disabled={busy || !e.canAccept} onClick={() => run('accept', [e.id])}>✓</button>
-                        <button type="button" class="btn sm ghost danger rej-one" aria-label="Odrzuć wpis" disabled={busy || !e.canReject} onClick={() => run('reject', [e.id])}>✗</button>
+                        <button type="button" class="btn sm ghost acc-one" aria-label="Accept entry" disabled={busy || !e.canAccept} onClick={() => run('accept', [e.id])}>✓</button>
+                        <button type="button" class="btn sm ghost danger rej-one" aria-label="Reject entry" disabled={busy || !e.canReject} onClick={() => run('reject', [e.id])}>✗</button>
                       </li>
                     ))}
                   </ul>

@@ -5,7 +5,7 @@ export default defineManifest({
   manifest_version: 3,
   name: 'TL Support',
   version: '0.1.0',
-  description: 'Panel Koordynatora zespołu w intranecie.',
+  description: 'Team lead support panel for the intranet.',
   permissions: ['storage'],
   host_permissions: [`${INTRANET_ORIGIN}/*`],
   content_scripts: [

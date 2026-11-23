@@ -12,20 +12,20 @@ export function parseTeamList(input: string | unknown, teamName: string = DEFAUL
     try {
       data = JSON.parse(input);
     } catch {
-      throw new ParseError(PAGE, 'poprawny JSON');
+      throw new ParseError(PAGE, 'valid JSON');
     }
   }
-  if (!Array.isArray(data)) throw new ParseError(PAGE, 'tablica użytkowników');
+  if (!Array.isArray(data)) throw new ParseError(PAGE, 'users array');
 
   const people: Person[] = [];
   for (let u of data as Record<string, any>[]) {
     if (u && typeof u[F.id] === 'number') u = { ...u, [F.id]: String(u[F.id]) };
     if (!u || typeof u[F.id] !== 'string' || typeof u[F.name] !== 'string') {
-      throw new ParseError(PAGE, `pola ${F.id}/${F.name} użytkownika`);
+      throw new ParseError(PAGE, `user fields ${F.id}/${F.name}`);
     }
     if (u[F.isActive] === false) continue;
     const teams: unknown = u[F.teams];
-    if (!Array.isArray(teams)) throw new ParseError(PAGE, `pole ${F.teams} (użytkownik ${u[F.id]})`);
+    if (!Array.isArray(teams)) throw new ParseError(PAGE, `field ${F.teams} (user ${u[F.id]})`);
     if (teams.some((t) => t?.[F.teamName] === teamName)) {
       people.push({ id: u[F.id], name: u[F.name], profileUrl: profileUrl(u[F.id]) });
     }

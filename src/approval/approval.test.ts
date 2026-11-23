@@ -92,7 +92,7 @@ describe('api', () => {
   });
   it('żądanie poza origin zablokowane', async () => {
     const f = vi.fn(async (_u: string) => json([]));
-    await expect(postJson(f, 'https://evil.example/api/times/approval', {})).rejects.toThrow(/Zablokowano/);
+    await expect(postJson(f, 'https://evil.example/api/times/approval', {})).rejects.toThrow(/Blocked request/);
     expect(f).not.toHaveBeenCalled();
   });
   it('401/403 → LoggedOutError', async () => {

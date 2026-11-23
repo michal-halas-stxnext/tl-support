@@ -22,7 +22,7 @@ describe('MonthView', () => {
     const root = document.createElement('div');
     render(<MonthView demo initialMonth="2026-11" loadSnapshot={async (m) => (m === '2026-10' ? snap : undefined)} />, root);
     await tick();
-    expect(root.querySelector('.no-data')?.textContent).toContain('Odśwież');
+    expect(root.querySelector('.no-data')?.textContent).toContain('Refresh');
     (root.querySelector('.prev') as HTMLButtonElement).click();
     await tick();
     expect(root.querySelector('.month-label')?.textContent).toBe('2026-10');
@@ -30,6 +30,14 @@ describe('MonthView', () => {
     expect(root.querySelector('tr[data-person="a"]')).not.toBeNull();
     expect(root.querySelector('.fetched')).not.toBeNull();
     expect(root.querySelector('.legend')).not.toBeNull();
+  });
+  it('„Today” wraca do bieżącego miesiąca', async () => {
+    const root = document.createElement('div');
+    render(<MonthView demo initialMonth="2000-01" loadSnapshot={async () => undefined} />, root);
+    await tick();
+    (root.querySelector('.today') as HTMLButtonElement).click();
+    await tick();
+    expect(root.querySelector('.month-label')?.textContent).toBe(new Date().toISOString().slice(0, 7));
   });
   it('ustawienia są overlayem poza przepływem; nawigacja i treść bez zmian struktury', async () => {
     const root = document.createElement('div');
