@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import type { Snapshot } from '../domain/types';
 import { getSnapshot, openDb } from '../storage/db';
 import { DEFAULT_SETTINGS, loadSettings, saveSettings, type Settings } from '../settings/settings';
@@ -37,6 +37,27 @@ export function MonthView({ loadSnapshot = fromDb, initialMonth, demo = false }:
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [showSettings, setShowSettings] = useState(false);
   const [reload, setReload] = useState(0);
+  const anchor = useRef<HTMLSpanElement>(null);
+
+  // Ustawienia: zamknięcie klikiem poza nimi lub Escape (Escape nie dociera do reszty panelu).
+  useEffect(() => {
+    if (!showSettings) return;
+    const onDown = (e: Event) => {
+      const el = anchor.current;
+      if (el && !e.composedPath().includes(el)) setShowSettings(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      e.stopPropagation();
+      setShowSettings(false);
+    };
+    document.addEventListener('pointerdown', onDown, true);
+    document.addEventListener('keydown', onKey, true);
+    return () => {
+      document.removeEventListener('pointerdown', onDown, true);
+      document.removeEventListener('keydown', onKey, true);
+    };
+  }, [showSettings]);
 
   useEffect(() => {
     loadSettings().then(setSettings);
@@ -65,21 +86,22 @@ export function MonthView({ loadSnapshot = fromDb, initialMonth, demo = false }:
   return (
     <div class="month-view">
       <div class="month-nav">
-        <button type="button" class="prev" aria-label="Poprzedni miesiąc" onClick={() => setMonth(shiftMonth(month, -1))}>←</button>
+        <button type="button" class="btn ghost prev" aria-label="Poprzedni miesiąc" onClick={() => setMonth(shiftMonth(month, -1))}>←</button>
         <strong class="month-label">{month}</strong>
-        <button type="button" class="next" aria-label="Następny miesiąc" onClick={() => setMonth(shiftMonth(month, 1))}>→</button>
-        <button type="button" class="settings-toggle" aria-pressed={showSettings} onClick={() => setShowSettings(!showSettings)}>Ustawienia</button>
-        {snapshot && <span class="fetched">Odświeżono: {new Date(snapshot.fetchedAt).toLocaleString('pl-PL')}</span>}
+        <button type="button" class="btn ghost next" aria-label="Następny miesiąc" onClick={() => setMonth(shiftMonth(month, 1))}>→</button>
+        <span class="settings-anchor" ref={anchor}>
+          <button type="button" class="btn settings-toggle" aria-pressed={showSettings} onClick={() => setShowSettings(!showSettings)}>Ustawienia</button>
+          {showSettings && <SettingsPanel settings={settings} people={snapshot?.people ?? []} onChange={change} />}
+        </span>
+        <span class="fetched">{snapshot ? `Odświeżono: ${new Date(snapshot.fetchedAt).toLocaleString('pl-PL')}` : ''}</span>
       </div>
       {!demo && <RefreshBar month={month} extraPeople={settings.extraPeople} onData={() => setReload((n) => n + 1)} />}
-      {showSettings && <SettingsPanel settings={settings} people={snapshot?.people ?? []} onChange={change} />}
-      {loaded && !snapshot && <p class="no-data">Brak danych dla {month} — kliknij „Odśwież”.</p>}
-      {snapshot && (
-        <>
-          <MonthGrid snapshot={snapshot} settings={settings} />
-          <Legend />
-        </>
-      )}
+      <div class="content">
+        {!loaded && <div class="loading" role="status" aria-label="Ładowanie" />}
+        {loaded && !snapshot && <p class="no-data">Brak danych dla {month} — kliknij „Odśwież”.</p>}
+        {snapshot && <MonthGrid snapshot={snapshot} settings={settings} />}
+      </div>
+      <Legend />
     </div>
   );
 }
