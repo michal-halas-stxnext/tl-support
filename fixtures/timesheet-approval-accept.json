@@ -1,0 +1,29 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/api/times/approval",
+    "headers": {
+      "content-type": "application/json; charset=UTF-8",
+      "x-requested-with": "XMLHttpRequest"
+    },
+    "body": {
+      "action": "ACCEPTED",
+      "ids": [
+        1001
+      ]
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": [
+      {
+        "approvalState": "ACCEPTED",
+        "approvalAuthor": "Osoba A",
+        "approvalTimestamp": "2026-11-23 15:00:00",
+        "timeEntryId": 1001,
+        "canAccept": false,
+        "canReject": true
+      }
+    ]
+  }
+}

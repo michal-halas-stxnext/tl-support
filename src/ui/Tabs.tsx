@@ -1,11 +1,15 @@
 import type { ComponentType } from 'preact';
 import { useState } from 'preact/hooks';
+import { ApprovalView } from './ApprovalView';
 import { MonthView } from './MonthView';
 
 export type TabDef = { id: string; label: string; component: ComponentType };
 
 /** Rejestr tabów — nowy tab = jeden wpis. */
-export const TABS: TabDef[] = [{ id: 'time-logged', label: 'Time logged', component: () => <MonthView /> }];
+export const TABS: TabDef[] = [
+  { id: 'time-logged', label: 'Time logged', component: () => <MonthView /> },
+  { id: 'approval', label: 'Approval', component: () => <ApprovalView /> },
+];
 
 export const TAB_KEY = 'tl-support:tab';
 

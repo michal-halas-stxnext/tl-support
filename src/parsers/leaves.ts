@@ -29,14 +29,14 @@ function extractData(html: string): Record<string, any> {
     const start = m.index + m[0].length;
     if (text[start] !== '{') continue;
     const literal = sliceObject(text, start);
-    if (!literal) throw new ParseError(PAGE, 'domknięcie obiektu `data`');
+    if (!literal) throw new ParseError(PAGE, 'closing of the `data` object');
     try {
       return JSON.parse(literal);
     } catch {
-      throw new ParseError(PAGE, '`data` jako poprawny JSON');
+      throw new ParseError(PAGE, '`data` as valid JSON');
     }
   }
-  throw new ParseError(PAGE, 'inline <script> z `var data = {...}`');
+  throw new ParseError(PAGE, 'inline <script> with `var data = {...}`');
 }
 
 /** HTML strony absences → urlopy (zakresy dni roboczych) + święta z intranetu. */
@@ -44,10 +44,10 @@ export function parseLeaves(html: string): LeavesPage {
   const data = extractData(html);
   const absences = data[F.absences];
   if (!absences || typeof absences !== 'object' || Array.isArray(absences)) {
-    throw new ParseError(PAGE, `pole \`${F.absences}\``);
+    throw new ParseError(PAGE, `field \`${F.absences}\``);
   }
   const year = data[F.year];
-  if (typeof year !== 'number') throw new ParseError(PAGE, `pole \`${F.year}\``);
+  if (typeof year !== 'number') throw new ParseError(PAGE, `field \`${F.year}\``);
   const holidays: IsoDate[] = Array.isArray(data[F.holidays]) ? data[F.holidays] : [];
   const holidaySet = new Set(holidays);
 
@@ -56,7 +56,7 @@ export function parseLeaves(html: string): LeavesPage {
     for (const [start, entry] of Object.entries(byDate)) {
       const n = entry?.[ENTRY.days];
       if (!/^\d{4}-\d{2}-\d{2}$/.test(start) || !Number.isInteger(n) || n < 1) {
-        throw new ParseError(PAGE, `poprawny wpis absencji (${personId} ${start})`);
+        throw new ParseError(PAGE, `valid absence entry (${personId} ${start})`);
       }
       const days = workingDaysFrom(start, n, holidaySet);
       if (days.length === 0) continue;

@@ -6,3 +6,18 @@ export const COL = {
   time: 'timeentry_time',
   nonBillable: 'project_non_billable',
 } as const;
+
+// Kolumny wymagane przez zakładkę akceptacji (ten sam endpoint co wyżej).
+export const APPROVAL_COL = {
+  id: 'timeentry_id',
+  userId: 'user_id',
+  userName: 'user_name',
+  date: 'timeentry_date',
+  time: 'timeentry_time',
+  nonBillable: 'project_non_billable',
+  state: 'timeentry_approval_state',
+  project: 'project_name',
+  description: 'timeentry_description',
+  canAccept: 'can_accept',
+  canReject: 'can_reject',
+} as const;

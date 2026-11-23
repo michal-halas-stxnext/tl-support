@@ -73,20 +73,20 @@ export function Panel({ onClose, fullscreen = false, onToggleFullscreen, size, v
         <strong>TL Support</strong>
         <span class="actions">
           {manual && (
-            <button type="button" class="icon-btn reset-size" aria-label="Przywróć domyślny rozmiar" title="Przywróć domyślny rozmiar" onClick={onReset}>
+            <button type="button" class="icon-btn reset-size" aria-label="Reset to default size" title="Reset to default size" onClick={onReset}>
               <Icon d={ICONS.reset} />
             </button>
           )}
           <button
             type="button"
             class="icon-btn fs"
-            aria-label={fullscreen ? 'Zamknij pełny ekran' : 'Pełny ekran'}
-            title={fullscreen ? 'Zamknij pełny ekran' : 'Pełny ekran'}
+            aria-label={fullscreen ? 'Exit full screen' : 'Full screen'}
+            title={fullscreen ? 'Exit full screen' : 'Full screen'}
             onClick={onToggleFullscreen}
           >
             <Icon d={fullscreen ? ICONS.shrink : ICONS.expand} />
           </button>
-          <button type="button" class="icon-btn close" aria-label="Zamknij" onClick={onClose}>
+          <button type="button" class="icon-btn close" aria-label="Close" onClick={onClose}>
             <Icon d={ICONS.close} />
           </button>
         </span>

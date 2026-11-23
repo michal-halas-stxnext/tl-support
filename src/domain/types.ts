@@ -45,3 +45,21 @@ export interface Snapshot {
   /** Święta z intranetu (pomocne dla widoku/eksportu). */
   holidays: IsoDate[];
 }
+
+/** Stan akceptacji wpisu godzin (`OPEN` → po pierwszej akcji tylko ACCEPTED↔REJECTED). */
+export type ApprovalState = 'OPEN' | 'ACCEPTED' | 'REJECTED' | (string & {});
+
+export interface ApprovalEntry {
+  /** `timeentry_id` (string; do API wysyłany jako liczba, gdy numeryczny). */
+  id: string;
+  personId: string;
+  personName: string;
+  date: IsoDate;
+  minutes: number;
+  nonBillable: boolean;
+  state: ApprovalState;
+  project: string;
+  description: string;
+  canAccept: boolean;
+  canReject: boolean;
+}

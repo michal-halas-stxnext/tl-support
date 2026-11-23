@@ -4,6 +4,8 @@ import type { Snapshot } from '../domain/types';
 import { parseLeaves } from '../parsers/leaves';
 import { parseTeamList } from '../parsers/teamList';
 import { parseTimesheet } from '../parsers/timesheet';
+import { parseApprovalEntries } from '../parsers/approval';
+import { ApprovalView, type ApprovalDeps } from '../ui/ApprovalView';
 import { MonthView } from '../ui/MonthView';
 import { styles } from '../ui/styles';
 
@@ -22,10 +24,24 @@ const snap: Snapshot = {
   holidays: page.holidays,
 };
 
+// Mock zapisu: stan w pamięci, bez intranetu.
+let approvalEntries = [...parseApprovalEntries(fx('timesheet-approval-billable.json')), ...parseApprovalEntries(fx('timesheet-approval-nonbillable.json'))];
+const setState = (ids: string[], state: 'ACCEPTED' | 'REJECTED') => {
+  approvalEntries = approvalEntries.map((e) => (ids.includes(e.id) ? { ...e, state, canAccept: state === 'REJECTED', canReject: state === 'ACCEPTED' } : e));
+  return { ok: ids, failed: [] };
+};
+const approvalDeps: ApprovalDeps = {
+  fetchEntries: async (m) => (m === '2026-11' ? approvalEntries : []),
+  accept: async (ids) => setState(ids, 'ACCEPTED'),
+  reject: async (ids) => setState(ids, 'REJECTED'),
+};
+
 document.head.append(Object.assign(document.createElement('style'), { textContent: styles + '.demo-wrap{font:14px system-ui;padding:16px}' }));
 render(
   <div class="demo-wrap">
     <MonthView demo initialMonth="2026-11" loadSnapshot={async (m) => (m === '2026-11' ? snap : undefined)} />
+    <hr />
+    <ApprovalView deps={approvalDeps} initialMonth="2026-11" lineManagerId="1954" />
   </div>,
   document.getElementById('app')!,
 );

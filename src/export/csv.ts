@@ -3,7 +3,7 @@ import { workingDaysBetween } from '../parsers/dates';
 
 export const CSV_SEPARATOR = ';'; // Excel w polskich ustawieniach regionalnych
 export const CSV_BOM = '﻿';
-export const CSV_HEADERS = ['Osoba', 'Data', 'Godziny', 'Godziny non-billable', 'Urlop'] as const;
+export const CSV_HEADERS = ['Person', 'Date', 'Hours', 'Non-billable hours', 'Leave'] as const;
 
 function cell(v: string | number): string {
   const s = typeof v === 'number' ? String(v).replace('.', ',') : v;
@@ -34,7 +34,7 @@ export function snapshotToCsv(s: Snapshot): string {
   const sorted = [...rows.entries()].sort(([a], [b]) => (a < b ? -1 : 1));
   const lines = [CSV_HEADERS.join(CSV_SEPARATOR)];
   for (const [, r] of sorted) {
-    lines.push([cell(r.name), r.date, cell(r.h), cell(r.nb), r.leave ? 'tak' : ''].join(CSV_SEPARATOR));
+    lines.push([cell(r.name), r.date, cell(r.h), cell(r.nb), r.leave ? 'yes' : ''].join(CSV_SEPARATOR));
   }
   return CSV_BOM + lines.join('\r\n') + '\r\n';
 }

@@ -19,13 +19,13 @@ describe('snapshotToCsv', () => {
   const lines = csv.split('\r\n');
   it('BOM UTF-8, nagłówki, separator ;', () => {
     expect(csv.startsWith(CSV_BOM)).toBe(true);
-    expect(lines[0]).toBe(CSV_BOM + 'Osoba;Data;Godziny;Godziny non-billable;Urlop');
+    expect(lines[0]).toBe(CSV_BOM + 'Person;Date;Hours;Non-billable hours;Leave');
   });
   it('wiersz z godzinami, przecinek dziesiętny i escapowanie', () => {
     expect(lines[1]).toBe('"Anna ""Ania"" Ż;ółć";2026-11-02;7,5;0,25;');
   });
   it('urlop rozwinięty na dni robocze bez świąt', () => {
-    expect(lines.slice(2, 4)).toEqual(['Bartek;2026-11-10;0;0;tak', 'Bartek;2026-11-12;0;0;tak']);
+    expect(lines.slice(2, 4)).toEqual(['Bartek;2026-11-10;0;0;yes', 'Bartek;2026-11-12;0;0;yes']);
     expect(lines[4]).toBe('');
   });
 });
