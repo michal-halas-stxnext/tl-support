@@ -9,6 +9,7 @@ Rules for AI agents working in this repo. Sourced from the project, its plans an
 
 ## UI
 - Any month picker uses the shared `src/ui/MonthNav.tsx` (←, label, →, "Today" button). Disabled, not hidden, when already on the current month. Do not reimplement.
+- Confirmations, alerts and similar prompts use the in-panel dialog (`useDialog()` from `src/ui/Dialog.tsx`: `confirm`, `alert`), never native `confirm()`/`alert()`/`prompt()`. Styled with the plugin's tokens; Escape closes only the dialog. Applies to future features too.
 - Accept tab (timesheet approval): Non-billable is the default filter.
 - Only Billable hours count in totals. Non-billable is shown separately.
 - Settings popup: closes on outside click or Escape. Escape must close only that popup, not the whole TL panel.
