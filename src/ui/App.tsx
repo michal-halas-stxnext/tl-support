@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
 import { Panel } from './Panel';
+import { clampSize, loadSize, saveSize, useViewport, type Size } from './useResize';
 
 const FS_KEY = 'tl-support:fullscreen';
 
@@ -23,6 +24,13 @@ export function App() {
   const [open, setOpen] = useState(false);
   const [fullscreen, setFullscreen] = useState(loadFullscreen);
 
+  const [size, setSizeState] = useState<Size | undefined>(loadSize);
+  const vp = useViewport();
+  const setSize = (v: Size | undefined) => {
+    setSizeState(v);
+    saveSize(v);
+  };
+
   const setFs = (v: boolean) => {
     setFullscreen(v);
     saveFullscreen(v);
@@ -43,6 +51,10 @@ export function App() {
         <Panel
           onClose={() => setOpen(false)}
           fullscreen={fullscreen}
+          size={size && clampSize(size, vp)}
+          viewport={vp}
+          onResize={setSize}
+          onReset={() => setSize(undefined)}
           onToggleFullscreen={() => setFs(!fullscreen)}
         />
       )}

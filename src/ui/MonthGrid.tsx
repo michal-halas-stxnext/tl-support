@@ -46,7 +46,11 @@ export function MonthGrid({ snapshot, settings }: Props) {
                   return (
                     <td class={cls.join(' ')} title={e && e.nonBillableHours ? `non-billable: ${fmt(e.nonBillableHours)} h` : undefined}>
                       {e ? fmt(e.hours) : ''}
-                      {e && e.nonBillableHours > 0 && <sup class="nb">{fmt(e.nonBillableHours)}</sup>}
+                      {e && e.nonBillableHours > 0 && (
+                        <sup class="nb" title={`non-billable: ${fmt(e.nonBillableHours)} h`}>
+                          {fmt(e.nonBillableHours)}
+                        </sup>
+                      )}
                     </td>
                   );
                 })}
@@ -67,7 +71,7 @@ export function Legend() {
   return (
     <div class="legend">
       <span class="sw leave" /> urlop <span class="sw weekend" /> weekend <span class="sw holiday" /> święto{' '}
-      <span class="sw off-work" /> praca w dzień wolny <sup class="nb">n</sup> non-billable
+      <span class="sw off-work" /> praca w dzień wolny <span class="nb">+n</span> non-billable (godziny obok billable)
     </div>
   );
 }

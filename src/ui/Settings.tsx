@@ -22,7 +22,7 @@ export function SettingsPanel({ settings, people, onChange }: Props) {
               <input type="checkbox" checked={!excluded.has(p.id)} onChange={() => toggle(p.id)} /> {p.name}
             </label>
             {settings.extraPeople.some((e) => e.id === p.id) && (
-              <button type="button" class="rm-person" onClick={() => onChange({ ...settings, extraPeople: settings.extraPeople.filter((e) => e.id !== p.id) })}>
+              <button type="button" class="btn ghost danger sm rm-person" onClick={() => onChange({ ...settings, extraPeople: settings.extraPeople.filter((e) => e.id !== p.id) })}>
                 usuń
               </button>
             )}
@@ -34,7 +34,7 @@ export function SettingsPanel({ settings, people, onChange }: Props) {
         <input placeholder="imię i nazwisko" value={name} onInput={(e) => setName((e.target as HTMLInputElement).value)} />
         <button
           type="button"
-          class="add-person"
+          class="btn add-person"
           disabled={!id.trim() || !name.trim()}
           onClick={() => {
             onChange({ ...settings, extraPeople: [...settings.extraPeople.filter((p) => p.id !== id.trim()), { id: id.trim(), name: name.trim() }] });
@@ -49,7 +49,7 @@ export function SettingsPanel({ settings, people, onChange }: Props) {
       <ul>
         {settings.customDaysOff.map((d) => (
           <li>
-            {d} <button type="button" class="rm-day" onClick={() => onChange({ ...settings, customDaysOff: settings.customDaysOff.filter((x) => x !== d) })}>usuń</button>
+            {d} <button type="button" class="btn ghost danger sm rm-day" onClick={() => onChange({ ...settings, customDaysOff: settings.customDaysOff.filter((x) => x !== d) })}>usuń</button>
           </li>
         ))}
       </ul>
@@ -57,7 +57,7 @@ export function SettingsPanel({ settings, people, onChange }: Props) {
         <input type="date" value={day} onInput={(e) => setDay((e.target as HTMLInputElement).value)} />
         <button
           type="button"
-          class="add-day"
+          class="btn add-day"
           disabled={!day || settings.customDaysOff.includes(day)}
           onClick={() => {
             onChange({ ...settings, customDaysOff: [...settings.customDaysOff, day].sort() });

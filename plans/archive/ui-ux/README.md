@@ -1,15 +1,16 @@
 # Podniesienie jakości UI/UX wtyczki TL Support
 Goal: Popup z możliwością zmiany rozmiaru (zapamiętywaną), stabilny layout bez „rozsuwania” elementów, taby (pierwszy: „Time logged”) i przyjemniejszy wygląd.
 Planning: complete
+Status: closed 2026-11-23
 Source: rozmowa 2026-11-23 — lista uwag użytkownika do UI/UX
 
 ## Stages
 | NN | Stage | Executor | Status | Verification |
 |----|-------|----------|--------|--------------|
-| 01 | [Stabilny layout](01-stable-layout.md) | agent | planned | `npx vitest run src/ui` + przegląd demo |
-| 02 | [Resize popupu, reset, limity](02-resizable-panel.md) | agent | planned | `npx vitest run src/ui` + przegląd w Chrome |
-| 03 | [Taby](03-tabs.md) | agent | planned | `npx vitest run src/ui` |
-| 04 | [Redesign wizualny](04-visual-polish.md) | agent | planned | `npm run build`, `npx vitest run src/ui` + przegląd użytkownika |
+| 01 | [Stabilny layout](01-stable-layout.md) | agent | done | `npx vitest run src/ui` + przegląd demo |
+| 02 | [Resize popupu, reset, limity](02-resizable-panel.md) | agent | done | `npx vitest run src/ui` + przegląd w Chrome |
+| 03 | [Taby](03-tabs.md) | agent | done (testy) | `npx vitest run src/ui` |
+| 04 | [Redesign wizualny](04-visual-polish.md) | agent | done | `npm run build`, `npx vitest run src/ui` + przegląd użytkownika |
 
 ## Decisions
 - Q1: 4 etapy w kolejności 01→04 (osobna weryfikacja, mały diff)
