@@ -113,6 +113,6 @@ describe('id liczbowe', () => {
   });
   it('błąd wiersza wskazuje zły typ pola (bez wartości)', () => {
     const cols = ['user_id', 'timeentry_date', 'timeentry_time', 'project_non_billable'];
-    expect(() => parseTimesheet({ columns: cols, rows: [[null, '02.11.2026', '1', false]] }, 2026, 11)).toThrow(/czas.*user_id:object/);
+    expect(() => parseTimesheet({ columns: cols, rows: [[null, '02.11.2026', '1', false]] }, 2026, 11)).toThrow(/time.*user_id:object/);
   });
 });

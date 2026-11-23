@@ -3,15 +3,11 @@ import type { Snapshot } from '../domain/types';
 import { getSnapshot, openDb } from '../storage/db';
 import { DEFAULT_SETTINGS, loadSettings, saveSettings, type Settings } from '../settings/settings';
 import { Legend, MonthGrid } from './MonthGrid';
+import { MonthNav, thisMonth } from './MonthNav';
 import { RefreshBar } from './RefreshBar';
 import { SettingsPanel } from './Settings';
 
-export const shiftMonth = (m: string, d: number) => {
-  const [y, mo] = m.split('-').map(Number);
-  const t = new Date(Date.UTC(y, mo - 1 + d, 1));
-  return `${t.getUTCFullYear()}-${String(t.getUTCMonth() + 1).padStart(2, '0')}`;
-};
-const thisMonth = () => new Date().toISOString().slice(0, 7);
+export { shiftMonth } from './MonthNav';
 
 type Props = {
   /** Wstrzykiwane w trybie demo / testach; domyślnie IndexedDB. */
@@ -39,7 +35,7 @@ export function MonthView({ loadSnapshot = fromDb, initialMonth, demo = false }:
   const [reload, setReload] = useState(0);
   const anchor = useRef<HTMLSpanElement>(null);
 
-  // Ustawienia: zamknięcie klikiem poza nimi lub Escape (Escape nie dociera do reszty panelu).
+  // Settings: zamknięcie klikiem poza nimi lub Escape (Escape nie dociera do reszty panelu).
   useEffect(() => {
     if (!showSettings) return;
     const onDown = (e: Event) => {
@@ -86,19 +82,17 @@ export function MonthView({ loadSnapshot = fromDb, initialMonth, demo = false }:
   return (
     <div class="month-view">
       <div class="month-nav">
-        <button type="button" class="btn ghost prev" aria-label="Poprzedni miesiąc" onClick={() => setMonth(shiftMonth(month, -1))}>←</button>
-        <strong class="month-label">{month}</strong>
-        <button type="button" class="btn ghost next" aria-label="Następny miesiąc" onClick={() => setMonth(shiftMonth(month, 1))}>→</button>
+        <MonthNav month={month} onChange={setMonth} />
         <span class="settings-anchor" ref={anchor}>
-          <button type="button" class="btn settings-toggle" aria-pressed={showSettings} onClick={() => setShowSettings(!showSettings)}>Ustawienia</button>
+          <button type="button" class="btn settings-toggle" aria-pressed={showSettings} onClick={() => setShowSettings(!showSettings)}>Settings</button>
           {showSettings && <SettingsPanel settings={settings} people={snapshot?.people ?? []} onChange={change} />}
         </span>
-        <span class="fetched">{snapshot ? `Odświeżono: ${new Date(snapshot.fetchedAt).toLocaleString('pl-PL')}` : ''}</span>
+        <span class="fetched">{snapshot ? `Refreshed: ${new Date(snapshot.fetchedAt).toLocaleString('en-GB')}` : ''}</span>
       </div>
       {!demo && <RefreshBar month={month} extraPeople={settings.extraPeople} onData={() => setReload((n) => n + 1)} />}
       <div class="content">
-        {!loaded && <div class="loading" role="status" aria-label="Ładowanie" />}
-        {loaded && !snapshot && <p class="no-data">Brak danych dla {month} — kliknij „Odśwież”.</p>}
+        {!loaded && <div class="loading" role="status" aria-label="Loading" />}
+        {loaded && !snapshot && <p class="no-data">No data for {month} — click “Refresh”.</p>}
         {snapshot && <MonthGrid snapshot={snapshot} settings={settings} />}
       </div>
       <Legend />

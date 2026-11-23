@@ -10,21 +10,21 @@ type Props = { snapshot: Snapshot; settings: Settings };
 export function MonthGrid({ snapshot, settings }: Props) {
   const days = daysOfMonth(snapshot.month, settings.customDaysOff);
   const people = effectivePeople(snapshot.people, settings);
-  if (people.length === 0) return <p class="empty">Brak osób do wyświetlenia.</p>;
+  if (people.length === 0) return <p class="empty">No people to display.</p>;
 
   return (
     <div class="grid-wrap">
       <table class="grid">
         <thead>
           <tr>
-            <th class="name">Osoba</th>
+            <th class="name">Person</th>
             {days.map((d) => (
               <th class={`day${d.weekend ? ' weekend' : ''}${d.holiday ? ' holiday' : ''}`}>{d.day}</th>
             ))}
-            <th class="sum">Suma</th>
-            <th class="sum">Norma</th>
-            <th class="sum">Różn.</th>
-            <th class="sum">Urlop</th>
+            <th class="sum">Total</th>
+            <th class="sum">Norm</th>
+            <th class="sum">Diff</th>
+            <th class="sum">Leave</th>
           </tr>
         </thead>
         <tbody>
@@ -70,8 +70,8 @@ export function MonthGrid({ snapshot, settings }: Props) {
 export function Legend() {
   return (
     <div class="legend">
-      <span class="sw leave" /> urlop <span class="sw weekend" /> weekend <span class="sw holiday" /> święto{' '}
-      <span class="sw off-work" /> praca w dzień wolny <span class="nb">+n</span> non-billable (godziny obok billable)
+      <span class="sw leave" /> leave <span class="sw weekend" /> weekend <span class="sw holiday" /> holiday{' '}
+      <span class="sw off-work" /> work on a day off <span class="nb">+n</span> non-billable (hours next to billable)
     </div>
   );
 }

@@ -14,7 +14,7 @@ export function SettingsPanel({ settings, people, onChange }: Props) {
 
   return (
     <div class="settings">
-      <h4>Osoby</h4>
+      <h4>People</h4>
       <ul>
         {[...people, ...settings.extraPeople.filter((e) => !people.some((p) => p.id === e.id))].map((p) => (
           <li>
@@ -23,15 +23,15 @@ export function SettingsPanel({ settings, people, onChange }: Props) {
             </label>
             {settings.extraPeople.some((e) => e.id === p.id) && (
               <button type="button" class="btn ghost danger sm rm-person" onClick={() => onChange({ ...settings, extraPeople: settings.extraPeople.filter((e) => e.id !== p.id) })}>
-                usuń
+                remove
               </button>
             )}
           </li>
         ))}
       </ul>
       <div class="row">
-        <input placeholder="id z intranetu" value={id} onInput={(e) => setId((e.target as HTMLInputElement).value)} />
-        <input placeholder="imię i nazwisko" value={name} onInput={(e) => setName((e.target as HTMLInputElement).value)} />
+        <input placeholder="intranet id" value={id} onInput={(e) => setId((e.target as HTMLInputElement).value)} />
+        <input placeholder="full name" value={name} onInput={(e) => setName((e.target as HTMLInputElement).value)} />
         <button
           type="button"
           class="btn add-person"
@@ -42,14 +42,14 @@ export function SettingsPanel({ settings, people, onChange }: Props) {
             setName('');
           }}
         >
-          Dodaj osobę
+          Add person
         </button>
       </div>
-      <h4>Własne dni wolne</h4>
+      <h4>Custom days off</h4>
       <ul>
         {settings.customDaysOff.map((d) => (
           <li>
-            {d} <button type="button" class="btn ghost danger sm rm-day" onClick={() => onChange({ ...settings, customDaysOff: settings.customDaysOff.filter((x) => x !== d) })}>usuń</button>
+            {d} <button type="button" class="btn ghost danger sm rm-day" onClick={() => onChange({ ...settings, customDaysOff: settings.customDaysOff.filter((x) => x !== d) })}>remove</button>
           </li>
         ))}
       </ul>
@@ -64,10 +64,10 @@ export function SettingsPanel({ settings, people, onChange }: Props) {
             setDay('');
           }}
         >
-          Dodaj dzień
+          Add day
         </button>
       </div>
-      <h4>Norma dzienna (h)</h4>
+      <h4>Daily norm (h)</h4>
       <input
         type="number"
         min="1"

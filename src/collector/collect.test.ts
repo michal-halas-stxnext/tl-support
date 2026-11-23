@@ -99,8 +99,8 @@ describe('collectMonth', () => {
 
 describe('intranetUrl', () => {
   it('blokuje inny origin', () => {
-    expect(() => intranetUrl('https://evil.example/x')).toThrow(/poza intranet/);
-    expect(() => intranetUrl('//evil.example/x')).toThrow(/poza intranet/);
+    expect(() => intranetUrl('https://evil.example/x')).toThrow(/outside the intranet/);
+    expect(() => intranetUrl('//evil.example/x')).toThrow(/outside the intranet/);
     expect(intranetUrl('/a?b=1')).toBe('https://intranet.stxnext.pl/a?b=1');
   });
 });

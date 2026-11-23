@@ -13,16 +13,16 @@ export function parseTimesheet(input: string | unknown, year: number, month: num
     try {
       data = JSON.parse(input);
     } catch {
-      throw new ParseError(PAGE, 'poprawny JSON');
+      throw new ParseError(PAGE, 'valid JSON');
     }
   }
-  if (!data || !Array.isArray(data.columns)) throw new ParseError(PAGE, 'pole `columns`');
-  if (!Array.isArray(data.rows)) throw new ParseError(PAGE, 'pole `rows`');
+  if (!data || !Array.isArray(data.columns)) throw new ParseError(PAGE, 'field `columns`');
+  if (!Array.isArray(data.rows)) throw new ParseError(PAGE, 'field `rows`');
 
   const ix: Record<string, number> = {};
   for (const key of Object.values(COL)) {
     const i = (data.columns as string[]).indexOf(key);
-    if (i < 0) throw new ParseError(PAGE, `kolumna \`${key}\``);
+    if (i < 0) throw new ParseError(PAGE, `column \`${key}\``);
     ix[key] = i;
   }
 
@@ -34,11 +34,11 @@ export function parseTimesheet(input: string | unknown, year: number, month: num
     const rawId = row[ix[COL.userId]];
     const personId = typeof rawId === 'number' ? String(rawId) : rawId; // id bywa liczbą lub stringiem
     if (!date || minutes === null || typeof personId !== 'string' || personId === '') {
-      const bad = [!date && 'data', minutes === null && 'czas', typeof personId !== 'string' && 'user_id']
+      const bad = [!date && 'date', minutes === null && 'time', typeof personId !== 'string' && 'user_id']
         .filter(Boolean)
         .join('/');
       const types = [COL.date, COL.time, COL.userId].map((k) => `${k}:${typeof row[ix[k]]}`).join(', ');
-      throw new ParseError(PAGE, `poprawny wiersz #${n} (zły: ${bad || 'user_id'}; typy: ${types})`);
+      throw new ParseError(PAGE, `valid row #${n} (bad: ${bad || 'user_id'}; types: ${types})`);
     }
     if (!date.startsWith(prefix)) return;
     const key = `${personId}|${date}`;
