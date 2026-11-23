@@ -9,9 +9,9 @@ export interface Person {
 
 export interface Leave {
   personId: string;
-  /** Pierwszy dzień roboczy urlopu. */
+  /** First working day of the leave. */
   from: IsoDate;
-  /** Ostatni dzień roboczy urlopu (włącznie). */
+  /** Last working day of the leave (inclusive). */
   to: IsoDate;
   /** Surowy typ z intranetu (obecnie zawsze `bezplatny`, nieistotny). */
   type: string;
@@ -28,7 +28,7 @@ export interface TimeEntry {
 
 export interface LeavesPage {
   year: number;
-  /** Święta z intranetu (`YYYY-MM-DD`) — pomocne dla kalendarza. */
+  /** Intranet holidays (`YYYY-MM-DD`) — useful for the calendar. */
   holidays: IsoDate[];
   leaves: Leave[];
 }
@@ -39,10 +39,10 @@ export interface Snapshot {
   /** ISO timestamp pobrania. */
   fetchedAt: string;
   people: Person[];
-  /** Urlopy zachodzące na miesiąc (niepoprzycinane). */
+  /** Leaves overlapping the month (not trimmed). */
   leaves: Leave[];
   entries: TimeEntry[];
-  /** Święta z intranetu (pomocne dla widoku/eksportu). */
+  /** Intranet holidays (useful for the view/export). */
   holidays: IsoDate[];
 }
 
@@ -50,7 +50,7 @@ export interface Snapshot {
 export type ApprovalState = 'OPEN' | 'ACCEPTED' | 'REJECTED' | (string & {});
 
 export interface ApprovalEntry {
-  /** `timeentry_id` (string; do API wysyłany jako liczba, gdy numeryczny). */
+  /** `timeentry_id` (string; sent to the API as a number when numeric). */
   id: string;
   personId: string;
   personName: string;

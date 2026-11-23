@@ -27,7 +27,7 @@ function router(over: Partial<Record<'people' | 'leaves' | 'ts', () => Response 
 const base = { month: '2026-11', lineManagerId: 'user-900', delayMs: 0 };
 
 describe('collectMonth', () => {
-  it('pełny przebieg: snapshot z filtrem do podopiecznych, postęp, tylko origin intranetu', async () => {
+  it('full run: snapshot filtered to team members, progress, intranet origin only', async () => {
     const { fn, calls } = router();
     const progress: string[] = [];
     const r = await collectMonth({ ...base, fetchFn: fn, onProgress: (d, t) => progress.push(`${d}/${t}`), now: () => new Date('2026-11-23T10:00:00Z') });
@@ -48,7 +48,7 @@ describe('collectMonth', () => {
     expect(calls.find((u) => u.includes('approval'))).toContain('line_manager=user-900&month=2026-11-01');
   });
 
-  it('błąd jednego źródła nie przerywa reszty', async () => {
+  it('one source failing does not stop the rest', async () => {
     const { fn } = router({ ts: () => res('boom', { status: 500 }) });
     const r = await collectMonth({ ...base, fetchFn: fn });
     expect(r.errors).toEqual([{ source: 'timesheet', message: expect.stringContaining('500') }]);
@@ -56,7 +56,7 @@ describe('collectMonth', () => {
     expect(r.snapshot!.entries).toEqual([]);
   });
 
-  it('błąd parsowania źródła trafia do raportu', async () => {
+  it('a source parse error lands in the report', async () => {
     const { fn } = router({ leaves: () => res('<html></html>', { type: 'text/html' }) });
     const r = await collectMonth({ ...base, fetchFn: fn });
     expect(r.errors[0]).toMatchObject({ source: 'leaves' });
@@ -90,7 +90,7 @@ describe('collectMonth', () => {
     expect(r.snapshot).toBeNull();
   });
 
-  it('żąda credentials: include', async () => {
+  it('requests credentials: include', async () => {
     const spy = vi.fn<FetchLike>(async () => res('[]'));
     await collectMonth({ ...base, fetchFn: spy });
     expect(spy.mock.calls[0][1]).toMatchObject({ credentials: 'include' });
@@ -106,7 +106,7 @@ describe('intranetUrl', () => {
 });
 
 describe('runPool', () => {
-  it('nie przekracza maxParallel i zbiera błędy per zadanie', async () => {
+  it('does not exceed maxParallel and collects errors per task', async () => {
     let active = 0;
     let peak = 0;
     const mk = (i: number) => async () => {

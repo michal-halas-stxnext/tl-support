@@ -3,7 +3,7 @@ import { workingDaysFrom } from './dates';
 import { ParseError } from './errors';
 import { DATA_MARKER, ENTRY, F, PAGE, SCRIPT_SELECTOR } from './leaves.selectors';
 
-/** Wycina literał obiektu `{...}` od `start` (świadomie omija nawiasy w stringach). */
+/** Cuts out the object literal `{...}` from `start` (deliberately ignores braces inside strings). */
 function sliceObject(src: string, start: number): string | null {
   let depth = 0;
   let inStr = false;
@@ -39,7 +39,7 @@ function extractData(html: string): Record<string, any> {
   throw new ParseError(PAGE, 'inline <script> with `var data = {...}`');
 }
 
-/** HTML strony absences → urlopy (zakresy dni roboczych) + święta z intranetu. */
+/** Absences page HTML → leaves (working-day ranges) + intranet holidays. */
 export function parseLeaves(html: string): LeavesPage {
   const data = extractData(html);
   const absences = data[F.absences];

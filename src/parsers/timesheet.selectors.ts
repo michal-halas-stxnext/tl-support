@@ -7,7 +7,7 @@ export const COL = {
   nonBillable: 'project_non_billable',
 } as const;
 
-// Kolumny wymagane przez zakładkę akceptacji (ten sam endpoint co wyżej).
+// Columns required by the approval tab (same endpoint as above).
 export const APPROVAL_COL = {
   id: 'timeentry_id',
   userId: 'user_id',

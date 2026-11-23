@@ -7,7 +7,7 @@ import { App } from './App';
 describe('Panel', () => {
   beforeEach(() => localStorage.clear());
 
-  it('renderuje się i wywołuje onClose', () => {
+  it('renders and calls onClose', () => {
     const root = document.createElement('div');
     const onClose = vi.fn();
     render(<Panel onClose={onClose} />, root);
@@ -29,7 +29,7 @@ describe('Panel', () => {
     expect(root.querySelector('.panel')).toBeNull();
   });
 
-  it('fullscreen ukrywa przycisk TL, wyjście go przywraca', async () => {
+  it('fullscreen hides the TL button, leaving it restores it', async () => {
     const root = document.createElement('div');
     render(<App />, root);
     const tick = () => new Promise((r) => setTimeout(r));
@@ -45,19 +45,19 @@ describe('Panel', () => {
     expect(root.querySelector('.fab')).not.toBeNull();
   });
 
-  it('Escape wychodzi z fullscreen, zamknięcie zapamiętuje tryb', async () => {
+  it('Escape leaves fullscreen, closing remembers the mode', async () => {
     const root = document.createElement('div');
     render(<App />, root);
     const tick = () => new Promise((r) => setTimeout(r));
     (root.querySelector('.fab') as HTMLButtonElement).click();
     await tick();
     (root.querySelector('.fs') as HTMLButtonElement).click();
-    await new Promise((r) => setTimeout(r, 50)); // efekt Preact odpala się po renderze
+    await new Promise((r) => setTimeout(r, 50)); // the Preact effect fires after render
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
     await tick();
     expect(root.querySelector('.panel.fullscreen')).toBeNull();
     expect(root.querySelector('.panel')).not.toBeNull();
-    // fullscreen, zamknij przez ×, otwórz ponownie → nadal fullscreen
+    // fullscreen, close with ×, reopen → still fullscreen
     (root.querySelector('.fs') as HTMLButtonElement).click();
     await tick();
     (root.querySelector('.close') as HTMLButtonElement).click();
@@ -78,11 +78,11 @@ describe('resize', () => {
     expect(clampSize({ w: 100, h: 100 }, vp)).toEqual({ w: 480, h: 320 });
     expect(clampSize({ w: 5000, h: 5000 }, vp)).toEqual({ w: 1248, h: 708 });
     expect(clampSize({ w: 600, h: 400 }, vp)).toEqual({ w: 600, h: 400 });
-    // małe okno: nie schodzi poniżej minimum
+    // small window: does not go below the minimum
     expect(clampSize({ w: 600, h: 400 }, { w: 300, h: 300 })).toEqual({ w: 480, h: 320 });
   });
 
-  it('drag lewej krawędzi i narożnika zmienia rozmiar (prawo-dół zakotwiczone)', () => {
+  it('dragging the left edge and corner resizes (bottom-right anchored)', () => {
     const root = document.createElement('div');
     const onResize = vi.fn();
     render(<Panel onClose={() => {}} viewport={vp} onResize={onResize} />, root);
@@ -104,7 +104,7 @@ describe('resize', () => {
     expect(onResize).toHaveBeenLastCalledWith({ w: 720, h: 680 });
   });
 
-  it('reset widoczny tylko po ręcznej zmianie i poza fullscreen; fullscreen bez uchwytów', () => {
+  it('reset visible only after a manual resize and outside fullscreen; fullscreen has no handles', () => {
     const root = document.createElement('div');
     render(<Panel onClose={() => {}} />, root);
     expect(root.querySelector('.reset-size')).toBeNull();
@@ -119,7 +119,7 @@ describe('resize', () => {
     expect((root.querySelector('.panel') as HTMLElement).style.width).toBe('');
   });
 
-  it('App: rozmiar persist, reset czyści zapis, fullscreen zachowuje zapis', async () => {
+  it('App: size persists, reset clears the saved size, fullscreen keeps it', async () => {
     localStorage.setItem('tl-support:size', JSON.stringify({ w: 600, h: 400 }));
     const root = document.createElement('div');
     render(<App />, root);

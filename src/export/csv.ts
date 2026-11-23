@@ -10,7 +10,7 @@ function cell(v: string | number): string {
   return /[;"\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 
-/** CSV miesiąca: wiersz per osoba per dzień z godzinami lub urlopem. UTF-8 z BOM, CRLF. */
+/** Month CSV: a row per person per day with hours or leave. UTF-8 with BOM, CRLF. */
 export function snapshotToCsv(s: Snapshot): string {
   const holidays = new Set(s.holidays);
   const rows = new Map<string, { name: string; date: string; h: number; nb: number; leave: boolean }>();

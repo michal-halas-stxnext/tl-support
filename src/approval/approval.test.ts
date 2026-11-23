@@ -26,7 +26,7 @@ describe('parseApprovalEntries', () => {
     const e = bill[0]!;
     expect(e).toMatchObject({ id: 'te-0', personId: 'user-021', date: '2026-11-02', minutes: 480, state: 'OPEN', canAccept: true, canReject: true });
   });
-  it('brakująca kolumna → ParseError', () => {
+  it('missing column → ParseError', () => {
     const d = JSON.parse(fx('timesheet-approval-billable.json'));
     d.columns[d.columns.indexOf('can_accept')] = 'x';
     expect(() => parseApprovalEntries(d)).toThrow(ParseError);
@@ -71,7 +71,7 @@ describe('api', () => {
     await rejectEntries(f, ['1']);
     expect(JSON.parse(f.mock.calls[0]![1]!.body as string).action).toBe('REJECTED');
   });
-  it('paczki po 100; częściowa porażka', async () => {
+  it('batches of 100; partial failure', async () => {
     const ids = Array.from({ length: 150 }, (_, i) => String(i + 1));
     let n = 0;
     const f = vi.fn(async (_u: string, init?: RequestInit) =>
@@ -90,7 +90,7 @@ describe('api', () => {
     expect(r.ok).toEqual(['1']);
     expect(r.failed.map((x) => x.id)).toEqual(['2']);
   });
-  it('żądanie poza origin zablokowane', async () => {
+  it('request outside the origin blocked', async () => {
     const f = vi.fn(async (_u: string) => json([]));
     await expect(postJson(f, 'https://evil.example/api/times/approval', {})).rejects.toThrow(/Blocked request/);
     expect(f).not.toHaveBeenCalled();

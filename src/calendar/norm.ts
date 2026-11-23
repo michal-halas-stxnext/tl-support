@@ -9,7 +9,7 @@ export interface DayInfo {
   day: number;
   weekend: boolean;
   holiday: boolean;
-  /** Weekend, święto lub własny dzień wolny. */
+  /** Weekend, holiday or custom day off. */
   off: boolean;
 }
 
@@ -33,7 +33,7 @@ export interface PersonSummary {
   leaveDays: number;
 }
 
-/** Dni urlopu osoby w miesiącu (dni robocze, bez świąt/własnych dni wolnych). */
+/** A person's leave days in the month (working days, excluding holidays/custom days off). */
 export function leaveDaysInMonth(leaves: Leave[], personId: string, days: DayInfo[]): Set<IsoDate> {
   const off = new Set(days.filter((d) => d.off).map((d) => d.date));
   const inMonth = new Set(days.map((d) => d.date));
@@ -45,7 +45,7 @@ export function leaveDaysInMonth(leaves: Leave[], personId: string, days: DayInf
   return out;
 }
 
-/** Norma = (dni robocze − dni urlopu) × norma dzienna; różnica = suma − norma (praca w dni wolne wlicza się do sumy). */
+/** Norm = (working days − leave days) × daily norm; difference = total − norm (work on days off counts toward the total). */
 export function summarize(
   s: Pick<Snapshot, 'leaves' | 'entries'>,
   personId: string,

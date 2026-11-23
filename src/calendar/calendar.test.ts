@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { easterSunday, holidaysPl } from './holidays-pl';
 import { daysOfMonth, summarize } from './norm';
 
-describe('święta PL', () => {
+describe('PL holidays', () => {
   it('Wielkanoc', () => {
     expect([2025, 2026, 2027].map((y) => easterSunday(y).toISOString().slice(0, 10))).toEqual(['2025-04-20', '2026-04-05', '2027-03-28']);
   });
@@ -28,26 +28,26 @@ describe('święta PL', () => {
 
 describe('norma', () => {
   const none = { leaves: [], entries: [] };
-  it('miesiąc ze świętem: listopad 2026 = 21 dni rob. − 11.11 = 20 → 160 h', () => {
+  it('month with a holiday: November 2026 = 21 working days − 11.11 = 20 → 160 h', () => {
     const days = daysOfMonth('2026-11');
     expect(days.find((d) => d.date === '2026-11-11')).toMatchObject({ holiday: true, off: true });
     expect(summarize(none, 'u', days).norm).toBe(160);
   });
-  it('własny dzień wolny obniża normę', () => {
+  it('a custom day off lowers the norm', () => {
     expect(summarize(none, 'u', daysOfMonth('2026-11', ['2026-11-13'])).norm).toBe(152);
   });
-  it('urlop (przez weekend i święto) obniża normę o dni robocze', () => {
+  it('leave (across a weekend and holiday) lowers the norm by working days', () => {
     const s = { entries: [], leaves: [{ personId: 'u', from: '2026-11-09', to: '2026-11-13', type: 'x' }] };
     const r = summarize(s, 'u', daysOfMonth('2026-11'));
-    expect(r.leaveDays).toBe(4); // 11.11 święto
+    expect(r.leaveDays).toBe(4); // 11.11 is a holiday
     expect(r.norm).toBe(128);
     expect(r.diff).toBe(-128);
   });
-  it('urlop wystający poza miesiąc liczy tylko dni z miesiąca', () => {
+  it('leave extending past the month counts only days within the month', () => {
     const s = { entries: [], leaves: [{ personId: 'u', from: '2026-10-29', to: '2026-11-03', type: 'x' }] };
     expect(summarize(s, 'u', daysOfMonth('2026-11')).leaveDays).toBe(2);
   });
-  it('praca w weekend wlicza się do sumy i różnicy; non-billable osobno', () => {
+  it('weekend work counts toward the total and difference; non-billable separately', () => {
     const s = {
       leaves: [],
       entries: [

@@ -2,13 +2,13 @@ import { fetchText, postJson, type FetchLike } from '../collector/http';
 import type { ApprovalEntry } from '../domain/types';
 import { parseApprovalEntries } from '../parsers/approval';
 
-/** Maks. id w jednym żądaniu zapisu (limit serwera nieznany — przyjęto 100). */
+/** Max ids in one write request (server limit unknown — 100 assumed). */
 export const MAX_IDS_PER_REQUEST = 100;
 
 export type ApprovalAction = 'ACCEPTED' | 'REJECTED';
 
 export interface ApprovalResult {
-  /** Id, dla których serwer potwierdził docelowy stan. */
+  /** Ids for which the server confirmed the target state. */
   ok: string[];
   failed: { id: string; error: string }[];
 }
@@ -26,7 +26,7 @@ export async function fetchApproval(
 
 const toApiId = (id: string): number | string => (/^\d+$/.test(id) ? Number(id) : id);
 
-/** Wysyła akcję paczkami po `MAX_IDS_PER_REQUEST`, sekwencyjnie. `LoggedOutError` przerywa całość. */
+/** Sends the action in batches of `MAX_IDS_PER_REQUEST`, sequentially. `LoggedOutError` aborts everything. */
 async function send(fetchFn: FetchLike, action: ApprovalAction, ids: string[], signal?: AbortSignal): Promise<ApprovalResult> {
   const res: ApprovalResult = { ok: [], failed: [] };
   for (let i = 0; i < ids.length; i += MAX_IDS_PER_REQUEST) {

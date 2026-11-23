@@ -3,7 +3,7 @@ import { parseHm, parsePlDate } from './dates';
 import { ParseError } from './errors';
 import { APPROVAL_COL as C, PAGE } from './timesheet.selectors';
 
-/** Odpowiedź `GET /api/times/approval` → pojedyncze wpisy (bez filtrowania po miesiącu — robi to serwer). */
+/** Response of `GET /api/times/approval` → individual entries (no month filtering — the server does it). */
 export function parseApprovalEntries(input: string | unknown): ApprovalEntry[] {
   let data: any = input;
   if (typeof input === 'string') {

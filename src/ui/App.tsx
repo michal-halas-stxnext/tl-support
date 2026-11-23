@@ -16,7 +16,7 @@ function saveFullscreen(v: boolean) {
   try {
     localStorage.setItem(FS_KEY, v ? '1' : '0');
   } catch {
-    /* brak dostępu do storage — pomijamy */
+    /* no storage access — ignore */
   }
 }
 

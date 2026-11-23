@@ -6,12 +6,12 @@ type Props = {
   onClose: () => void;
   fullscreen?: boolean;
   onToggleFullscreen?: () => void;
-  /** Ręcznie ustawiony rozmiar (już zaklamrowany); brak = domyślny. */
+  /** Manually set size (already clamped); none = default. */
   size?: Size;
   viewport?: Viewport;
   onResize?: (s: Size) => void;
   onReset?: () => void;
-  /** Domyślnie rejestr TABS. */
+  /** Defaults to the TABS registry. */
   tabs?: TabDef[];
 };
 
@@ -43,7 +43,7 @@ export function Panel({ onClose, fullscreen = false, onToggleFullscreen, size, v
   const move = (e: PointerEvent) => {
     const d = drag.current;
     if (!d) return;
-    // panel kotwiczony prawy-dół: ruch w lewo/górę powiększa
+    // panel is anchored bottom-right: moving left/up enlarges it
     const w = d.edge === 't' ? d.w : d.w + (d.x - e.clientX);
     const h = d.edge === 'l' ? d.h : d.h + (d.y - e.clientY);
     onResize?.(clampSize({ w, h }, vp()));

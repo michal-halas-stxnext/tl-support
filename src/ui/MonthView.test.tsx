@@ -14,11 +14,11 @@ const snap: Snapshot = {
 };
 
 describe('MonthView', () => {
-  it('shiftMonth przez granicę roku', () => {
+  it('shiftMonth across the year boundary', () => {
     expect(shiftMonth('2026-12', 1)).toBe('2027-01');
     expect(shiftMonth('2026-01', -1)).toBe('2025-12');
   });
-  it('brak snapshotu → komunikat; strzałki zmieniają miesiąc i ładują dane', async () => {
+  it('no snapshot → message; arrows change the month and load data', async () => {
     const root = document.createElement('div');
     render(<MonthView demo initialMonth="2026-11" loadSnapshot={async (m) => (m === '2026-10' ? snap : undefined)} />, root);
     await tick();
@@ -31,7 +31,7 @@ describe('MonthView', () => {
     expect(root.querySelector('.fetched')).not.toBeNull();
     expect(root.querySelector('.legend')).not.toBeNull();
   });
-  it('„Today” wraca do bieżącego miesiąca', async () => {
+  it('"Today" returns to the current month', async () => {
     const root = document.createElement('div');
     render(<MonthView demo initialMonth="2000-01" loadSnapshot={async () => undefined} />, root);
     await tick();
@@ -39,7 +39,7 @@ describe('MonthView', () => {
     await tick();
     expect(root.querySelector('.month-label')?.textContent).toBe(new Date().toISOString().slice(0, 7));
   });
-  it('ustawienia są overlayem poza przepływem; nawigacja i treść bez zmian struktury', async () => {
+  it('settings are an overlay outside the flow; navigation and content keep their structure', async () => {
     const root = document.createElement('div');
     render(<MonthView demo initialMonth="2026-10" loadSnapshot={async () => snap} />, root);
     await tick();
@@ -54,7 +54,7 @@ describe('MonthView', () => {
     expect(root.querySelector('.month-nav')!.children.length).toBe(navBefore);
     expect(root.querySelector('.content .grid-wrap')).not.toBeNull();
   });
-  it('ustawienia zamykają się na klik poza i Escape; Escape nie dociera do reszty', async () => {
+  it('settings close on outside click and Escape; Escape does not reach the rest', async () => {
     const root = document.createElement('div');
     document.body.append(root);
     render(<MonthView demo initialMonth="2026-10" loadSnapshot={async () => snap} />, root);

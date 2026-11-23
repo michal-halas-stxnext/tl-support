@@ -7,7 +7,7 @@ import { CancelledError, fetchText, LoggedOutError, type FetchLike } from './htt
 import { runPool } from './pool';
 
 export interface CollectError {
-  /** Źródło danych, które zawiodło. */
+  /** The data source that failed. */
   source: 'people' | 'leaves' | 'timesheet';
   message: string;
 }
@@ -24,7 +24,7 @@ export interface CollectOptions {
   month: string;
   /** Id koordynatora (`line_manager` w API approval). */
   lineManagerId: string;
-  /** Osoby dodane ręcznie w ustawieniach — ich dane też zbieramy. */
+  /** People added manually in settings — their data is collected too. */
   extraPeople?: Pick<Person, 'id' | 'name'>[];
   fetchFn?: FetchLike;
   signal?: AbortSignal;
@@ -50,9 +50,9 @@ function overlapsMonth(l: Leave, month: string) {
 }
 
 /**
- * Kolejność: lista podopiecznych → (urlopy roku + timesheet miesiąca) z limitem tempa.
- * Błąd jednego źródła nie przerywa pozostałych; wylogowanie i anulowanie przerywają.
- * Brak listy podopiecznych = brak snapshotu (nie wiadomo kogo filtrować).
+ * Order: team members list → (year's leaves + month's timesheet) rate-limited.
+ * One source failing does not stop the others; logout and cancellation abort.
+ * No team members list = no snapshot (unknown whom to filter).
  */
 export async function collectMonth(o: CollectOptions): Promise<CollectResult> {
   const fetchFn: FetchLike = o.fetchFn ?? ((u, i) => fetch(u, i));
@@ -131,6 +131,6 @@ export async function collectMonth(o: CollectOptions): Promise<CollectResult> {
     entries: entries.filter((e) => ids.has(e.personId)),
     holidays: page?.holidays ?? [],
   };
-  // Częściowy snapshot (jedno źródło padło) zwracamy, ale wywołujący decyduje o zapisie po `errors`.
+  // A partial snapshot (one source failed) is returned, but the caller decides on saving based on `errors`.
   return result(snapshot);
 }

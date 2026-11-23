@@ -1,7 +1,7 @@
 import type { ApprovalEntry } from '../domain/types';
 
 export type BillabilityFilter = 'all' | 'billable' | 'non';
-/** `'all'` = bez filtra; inaczej dokładna wartość stanu (np. `OPEN`). */
+/** `'all'` = no filter; otherwise the exact state value (e.g. `OPEN`). */
 export type StateFilter = 'all' | (string & {});
 
 export interface ApprovalFilters {
@@ -25,7 +25,7 @@ export function filterEntries(entries: ApprovalEntry[], f: ApprovalFilters): App
   );
 }
 
-/** Grupuje wpisy per osoba (sort po nazwie); wpisy w grupie po dacie. Sumy liczone z przekazanych wpisów. */
+/** Groups entries per person (sorted by name); entries within a group by date. Sums computed from the passed entries. */
 export function groupByPerson(entries: ApprovalEntry[], filters?: ApprovalFilters): PersonGroup[] {
   const src = filters ? filterEntries(entries, filters) : entries;
   const map = new Map<string, PersonGroup>();

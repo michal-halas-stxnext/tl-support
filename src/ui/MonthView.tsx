@@ -10,10 +10,10 @@ import { SettingsPanel } from './Settings';
 export { shiftMonth } from './MonthNav';
 
 type Props = {
-  /** Wstrzykiwane w trybie demo / testach; domyślnie IndexedDB. */
+  /** Injected in demo mode / tests; defaults to IndexedDB. */
   loadSnapshot?: (month: string) => Promise<Snapshot | undefined>;
   initialMonth?: string;
-  /** Tryb demo: bez przycisków pobierania z intranetu. */
+  /** Demo mode: no buttons that fetch from the intranet. */
   demo?: boolean;
 };
 
@@ -35,7 +35,7 @@ export function MonthView({ loadSnapshot = fromDb, initialMonth, demo = false }:
   const [reload, setReload] = useState(0);
   const anchor = useRef<HTMLSpanElement>(null);
 
-  // Settings: zamknięcie klikiem poza nimi lub Escape (Escape nie dociera do reszty panelu).
+  // Settings: close on click outside or Escape (Escape does not reach the rest of the panel).
   useEffect(() => {
     if (!showSettings) return;
     const onDown = (e: Event) => {
