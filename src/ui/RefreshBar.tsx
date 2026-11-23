@@ -65,22 +65,24 @@ export function RefreshBar({ month, extraPeople, onData }: Props) {
   return (
     <div class="refresh-bar">
       {busy ? (
-        <button type="button" class="cancel" onClick={() => abort.current?.abort()}>
+        <button type="button" class="btn cancel" onClick={() => abort.current?.abort()}>
           Anuluj
         </button>
       ) : (
-        <button type="button" class="refresh" onClick={refresh}>
+        <button type="button" class="btn primary refresh" onClick={refresh}>
           Odśwież
         </button>
       )}
-      <button type="button" class="export" disabled={busy} onClick={exportCsv}>
+      <button type="button" class="btn export" disabled={busy} onClick={exportCsv}>
         Eksport CSV
       </button>
-      <button type="button" class="clear" disabled={busy} onClick={clear}>
+      <button type="button" class="btn ghost danger clear" disabled={busy} onClick={clear}>
         Wyczyść dane
       </button>
-      {progress && <span class="progress">{progress[0]} / {progress[1]} stron</span>}
-      {status && <span class="status" role="status">{status}</span>}
+      <span class="refresh-status">
+        {progress && <span class="progress">{progress[0]} / {progress[1]} stron</span>}
+        {status && <span class="status" role="status">{status}</span>}
+      </span>
       {errors.length > 0 && (
         <ul class="errors">
           {errors.map((e) => (
